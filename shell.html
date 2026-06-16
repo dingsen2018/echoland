@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Echoland 回声地</title>
+  <style>
+    :root {
+      --u: min(calc(100vw / 375), 1px);
+      --bg: #05080d;
+      --surface: #090d13;
+      --surface-soft: #11161d;
+      --border: rgba(255, 255, 255, .12);
+      --text-main: #ffffff;
+      --text-sub: #9da1a8;
+      --brand: #a8ff3d;
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #05080d;
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    button {
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .app-shell {
+      position: relative;
+      width: min(100vw, calc(430 * var(--u)));
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .app-main {
+      min-height: 100vh;
+      padding-bottom: calc(86 * var(--u) + env(safe-area-inset-bottom));
+    }
+
+    .tab-panel {
+      display: none;
+      min-height: calc(100vh - calc(86 * var(--u)));
+      background: var(--bg);
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .bottom-tabs {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: min(100vw, calc(430 * var(--u)));
+      padding: calc(7 * var(--u)) calc(12 * var(--u)) calc(7 * var(--u) + env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(255, 255, 255, .08);
+      background: rgba(5, 8, 13, .94);
+      backdrop-filter: blur(calc(18 * var(--u)));
+      transform: translateX(-50%);
+    }
+
+    .tab-btn {
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      min-height: calc(58 * var(--u));
+      border-radius: calc(18 * var(--u));
+      background: transparent;
+      color: var(--text-sub);
+      transition: color .18s ease, background .18s ease, transform .18s ease;
+    }
+
+    .tab-icon {
+      position: relative;
+      width: calc(36 * var(--u));
+      height: calc(36 * var(--u));
+    }
+
+    .tab-icon img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .tab-icon .icon-active {
+      opacity: 0;
+    }
+
+    .tab-btn.active .icon-default {
+      opacity: 0;
+    }
+
+    .tab-btn.active .icon-active {
+      opacity: 1;
+    }
+
+    .tab-btn span {
+      font-size: calc(11 * var(--u));
+      line-height: 1;
+    }
+
+    .tab-btn.active {
+      color: var(--brand);
+      background: transparent;
+    }
+
+    .tab-btn:active {
+      transform: scale(.96);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <main class="app-main">
+      <div id="tab-home" class="tab-panel active"></div>
+      <div id="tab-route" class="tab-panel"></div>
+      <div id="tab-community" class="tab-panel"></div>
+      <div id="tab-mine" class="tab-panel"></div>
+    </main>
+
+    <nav class="bottom-tabs" aria-label="底部导航">
+      <button class="tab-btn active" data-tab="tab-home" type="button" aria-label="首页">
+        <span class="tab-icon">
+          <img class="icon-default" src="assets/icons/home.png" alt="">
+          <img class="icon-active" src="assets/icons/home-active.png" alt="">
+        </span>
+      </button>
+      <button class="tab-btn" data-tab="tab-route" type="button" aria-label="AI 路线">
+        <span class="tab-icon">
+          <img class="icon-default" src="assets/icons/route.png" alt="">
+          <img class="icon-active" src="assets/icons/route-active.png" alt="">
+        </span>
+      </button>
+      <button class="tab-btn" data-tab="tab-community" type="button" aria-label="社区">
+        <span class="tab-icon">
+          <img class="icon-default" src="assets/icons/community.png" alt="">
+          <img class="icon-active" src="assets/icons/community-active.png" alt="">
+        </span>
+      </button>
+      <button class="tab-btn" data-tab="tab-mine" type="button" aria-label="我的">
+        <span class="tab-icon">
+          <img class="icon-default" src="assets/icons/mine.png" alt="">
+          <img class="icon-active" src="assets/icons/mine-active.png" alt="">
+        </span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === tabId);
+      });
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+    }
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+  </script>
+</body>
+</html>
