@@ -1,1 +1,1640 @@
 
+
+<style>
+/* ===== CSS Variables & Reset ===== */
+:root {
+  --u: 1px;
+  --bg: #0a0a0a;
+  --surface: #1a1a1a;
+  --surface-soft: #141414;
+  --border: #2a2a2a;
+  --text-main: #e8e8e8;
+  --text-sub: #7a7a7a;
+  --brand: #a8ff3d;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.mine-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  padding: 0 calc(16 * var(--u)) calc(120 * var(--u));
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ===== Scrollbar Hiding ===== */
+.mine-page::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ===== Section Titles ===== */
+.section-title {
+  font-size: calc(16 * var(--u));
+  font-weight: 700;
+  color: var(--text-main);
+  margin: calc(24 * var(--u)) 0 calc(14 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(7 * var(--u));
+}
+.section-title svg {
+  width: calc(16 * var(--u));
+  height: calc(16 * var(--u));
+  flex-shrink: 0;
+}
+
+/* ===== 1. Profile Header ===== */
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(28 * var(--u)) 0 calc(16 * var(--u));
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: calc(80 * var(--u));
+  height: calc(80 * var(--u));
+  border-radius: 50%;
+  border: calc(2.5 * var(--u)) solid var(--brand);
+  overflow: hidden;
+  background: var(--surface-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.avatar-wrapper svg {
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
+}
+
+.avatar-online-dot {
+  position: absolute;
+  bottom: calc(3 * var(--u));
+  right: calc(3 * var(--u));
+  width: calc(14 * var(--u));
+  height: calc(14 * var(--u));
+  border-radius: 50%;
+  background: #22c55e;
+  border: calc(2 * var(--u)) solid var(--bg);
+  box-shadow: 0 0 calc(8 * var(--u)) rgba(34, 197, 94, 0.5);
+}
+
+.profile-nickname {
+  font-size: calc(20 * var(--u));
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: calc(14 * var(--u));
+}
+
+.profile-bio {
+  font-size: calc(13 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(6 * var(--u));
+}
+
+/* ===== 2. Community Identity Tags ===== */
+.identity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(8 * var(--u));
+  justify-content: center;
+  padding: calc(8 * var(--u)) 0 calc(20 * var(--u));
+}
+
+.identity-tag {
+  display: flex;
+  align-items: center;
+  gap: calc(4 * var(--u));
+  font-size: calc(12 * var(--u));
+  color: var(--brand);
+  background: rgba(168, 255, 61, 0.08);
+  padding: calc(5 * var(--u)) calc(12 * var(--u));
+  border-radius: calc(20 * var(--u));
+  border: calc(1 * var(--u)) solid rgba(168, 255, 61, 0.15);
+  white-space: nowrap;
+}
+.identity-tag svg {
+  width: calc(10 * var(--u));
+  height: calc(10 * var(--u));
+  flex-shrink: 0;
+}
+
+/* ===== 3. Stats Grid ===== */
+.stats-section {
+  margin-bottom: calc(8 * var(--u));
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--surface);
+  border-radius: calc(14 * var(--u));
+  overflow: hidden;
+  border: calc(1 * var(--u)) solid var(--border);
+}
+
+.stat-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(14 * var(--u)) calc(6 * var(--u));
+  cursor: default;
+  position: relative;
+  transition: background 0.15s;
+}
+.stat-cell:active {
+  background: var(--surface-soft);
+}
+.stat-cell:not(:nth-child(4n))::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: calc(1 * var(--u));
+  background: var(--border);
+}
+.stat-cell:not(:nth-child(n+5))::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  width: 70%;
+  height: calc(1 * var(--u));
+  background: var(--border);
+}
+
+.stat-value {
+  font-size: calc(18 * var(--u));
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: calc(12 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(2 * var(--u));
+}
+
+/* ===== 4. Badge Showcase Wall ===== */
+.badge-wall {
+  margin-bottom: calc(8 * var(--u));
+}
+
+.badge-scroll {
+  display: flex;
+  gap: calc(12 * var(--u));
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: calc(4 * var(--u)) 0 calc(8 * var(--u));
+}
+
+.badge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: calc(80 * var(--u));
+  scroll-snap-align: start;
+}
+
+.badge-icon-circle {
+  width: calc(48 * var(--u));
+  height: calc(48 * var(--u));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: calc(8 * var(--u));
+}
+.badge-icon-circle svg {
+  width: calc(24 * var(--u));
+  height: calc(24 * var(--u));
+}
+
+.badge-icon-circle.locked {
+  background: var(--border);
+  opacity: 0.45;
+}
+.badge-icon-circle.locked svg {
+  opacity: 0.5;
+}
+
+.badge-icon-circle.purple-grad {
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+}
+.badge-icon-circle.blue-grad {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+.badge-icon-circle.orange-grad {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+.badge-icon-circle.green-grad {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+.badge-icon-circle.brand-grad {
+  background: linear-gradient(135deg, var(--brand), #84cc16);
+}
+
+.badge-name {
+  font-size: calc(12 * var(--u));
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: center;
+  margin-bottom: calc(2 * var(--u));
+}
+
+.badge-date {
+  font-size: calc(10 * var(--u));
+  color: var(--text-sub);
+  text-align: center;
+}
+
+.badge-date.locked-text {
+  color: var(--text-sub);
+  font-style: italic;
+}
+
+/* ===== 5. Content Tab Bar ===== */
+.tab-bar-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  padding: calc(8 * var(--u)) 0;
+  margin-bottom: calc(16 * var(--u));
+}
+
+.tab-bar {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--surface);
+  border-radius: calc(12 * var(--u));
+  padding: calc(4 * var(--u));
+  border: calc(1 * var(--u)) solid var(--border);
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(3 * var(--u));
+  padding: calc(8 * var(--u)) calc(9 * var(--u));
+  flex-shrink: 0;
+  cursor: pointer;
+  color: var(--text-sub);
+  border-radius: calc(10 * var(--u));
+  transition: all 0.2s;
+  position: relative;
+  font-size: calc(10 * var(--u));
+  white-space: nowrap;
+  min-width: calc(52 * var(--u));
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+.tab-item svg {
+  width: calc(16 * var(--u));
+  height: calc(16 * var(--u));
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+.tab-item.active {
+  color: var(--brand);
+  background: rgba(168, 255, 61, 0.06);
+}
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: calc(2 * var(--u));
+  left: 25%;
+  width: 50%;
+  height: calc(2.5 * var(--u));
+  background: var(--brand);
+  border-radius: calc(2 * var(--u));
+}
+
+/* ===== 6. Content Panels ===== */
+.content-panels {
+  position: relative;
+  min-height: calc(200 * var(--u));
+}
+
+.content-panel {
+  display: none;
+  animation: panelFadeIn 0.3s ease;
+  padding-bottom: calc(16 * var(--u));
+}
+.content-panel.active {
+  display: block;
+}
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(calc(8 * var(--u))); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Panel Card Styles ===== */
+.panel-card {
+  background: var(--surface);
+  border-radius: calc(12 * var(--u));
+  padding: calc(14 * var(--u));
+  margin-bottom: calc(10 * var(--u));
+  border: calc(1 * var(--u)) solid var(--border);
+}
+
+.panel-card-text {
+  font-size: calc(14 * var(--u));
+  color: var(--text-main);
+  line-height: 1.6;
+  margin-bottom: calc(10 * var(--u));
+}
+
+.panel-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-card-time {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+}
+
+.panel-card-stats {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--u));
+  font-size: calc(12 * var(--u));
+  color: var(--text-sub);
+}
+.panel-card-stats span {
+  display: flex;
+  align-items: center;
+  gap: calc(4 * var(--u));
+}
+.panel-card-stats svg {
+  width: calc(13 * var(--u));
+  height: calc(13 * var(--u));
+}
+
+/* Comment card */
+.comment-card .quoted-post {
+  font-size: calc(12 * var(--u));
+  color: var(--brand);
+  margin-bottom: calc(8 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(4 * var(--u));
+}
+.comment-card .quoted-post svg {
+  width: calc(12 * var(--u));
+  height: calc(12 * var(--u));
+  flex-shrink: 0;
+}
+
+/* Follow card */
+.follow-card {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--u));
+}
+.follow-avatar {
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
+  border-radius: 50%;
+  background: var(--surface-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(18 * var(--u));
+  font-weight: 700;
+  color: var(--brand);
+  flex-shrink: 0;
+  border: calc(1 * var(--u)) solid var(--border);
+}
+.follow-info {
+  flex: 1;
+  min-width: 0;
+}
+.follow-nickname {
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  color: var(--text-main);
+}
+.follow-bio {
+  font-size: calc(12 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(2 * var(--u));
+}
+.follow-time {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(4 * var(--u));
+}
+
+/* Bookmark card */
+.bookmark-card {
+  position: relative;
+  padding-left: calc(18 * var(--u));
+}
+.bookmark-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(4 * var(--u));
+  bottom: calc(4 * var(--u));
+  width: calc(3 * var(--u));
+  border-radius: calc(2 * var(--u));
+  background: linear-gradient(180deg, var(--brand), #84cc16);
+}
+.bookmark-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.bookmark-title {
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  color: var(--text-main);
+}
+.bookmark-bookmark-icon {
+  width: calc(16 * var(--u));
+  height: calc(16 * var(--u));
+  color: var(--brand);
+  flex-shrink: 0;
+}
+.bookmark-tags {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(4 * var(--u));
+}
+.bookmark-time-row {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(6 * var(--u));
+}
+
+/* Echo card */
+.echo-card {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--u));
+}
+.echo-info {
+  flex: 1;
+  min-width: 0;
+}
+.echo-location {
+  font-size: calc(15 * var(--u));
+  font-weight: 600;
+  color: var(--text-main);
+}
+.echo-meta {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(3 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+}
+.echo-meta span {
+  display: flex;
+  align-items: center;
+  gap: calc(3 * var(--u));
+}
+.echo-meta svg {
+  width: calc(11 * var(--u));
+  height: calc(11 * var(--u));
+}
+.echo-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(4 * var(--u));
+  flex-shrink: 0;
+}
+.echo-value-num {
+  font-size: calc(20 * var(--u));
+  font-weight: 700;
+  color: var(--brand);
+}
+.echo-value-bar {
+  width: calc(60 * var(--u));
+  height: calc(4 * var(--u));
+  background: var(--border);
+  border-radius: calc(2 * var(--u));
+  overflow: hidden;
+}
+.echo-value-bar-fill {
+  height: 100%;
+  background: var(--brand);
+  border-radius: calc(2 * var(--u));
+}
+
+/* Activity card */
+.activity-card {
+  display: flex;
+  gap: calc(12 * var(--u));
+  align-items: center;
+}
+.activity-thumb {
+  width: calc(64 * var(--u));
+  height: calc(64 * var(--u));
+  border-radius: calc(10 * var(--u));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.activity-thumb svg {
+  width: calc(28 * var(--u));
+  height: calc(28 * var(--u));
+}
+.activity-thumb.thumb-purple {
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+}
+.activity-thumb.thumb-blue {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+.activity-thumb.thumb-green {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+.activity-details {
+  flex: 1;
+  min-width: 0;
+}
+.activity-name {
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  color: var(--text-main);
+}
+.activity-meta {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(4 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+}
+.activity-meta span {
+  display: flex;
+  align-items: center;
+  gap: calc(3 * var(--u));
+}
+.activity-meta svg {
+  width: calc(11 * var(--u));
+  height: calc(11 * var(--u));
+}
+
+/* Route card */
+.route-card {
+  position: relative;
+  padding-left: calc(18 * var(--u));
+}
+.route-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(4 * var(--u));
+  bottom: calc(4 * var(--u));
+  width: calc(3 * var(--u));
+  border-radius: calc(2 * var(--u));
+  background: linear-gradient(180deg, #a855f7, #7c3aed);
+}
+.route-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.route-title {
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  color: var(--text-main);
+}
+.route-meta {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(6 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--u));
+}
+.route-meta span {
+  display: flex;
+  align-items: center;
+  gap: calc(3 * var(--u));
+}
+.route-meta svg {
+  width: calc(11 * var(--u));
+  height: calc(11 * var(--u));
+}
+.route-time {
+  font-size: calc(10 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(6 * var(--u));
+}
+
+/* Invitation card */
+.invitation-card .invitation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.invitation-title {
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  color: var(--text-main);
+}
+.invitation-init {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(4 * var(--u));
+}
+.invitation-meta {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(4 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--u));
+}
+.invitation-meta span {
+  display: flex;
+  align-items: center;
+  gap: calc(3 * var(--u));
+}
+.invitation-meta svg {
+  width: calc(11 * var(--u));
+  height: calc(11 * var(--u));
+}
+
+/* Check-in card */
+.checkin-card .checkin-meta {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(4 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--u));
+}
+.checkin-echo-bonus {
+  font-size: calc(12 * var(--u));
+  color: #22c55e;
+  font-weight: 600;
+  margin-top: calc(6 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(3 * var(--u));
+}
+.checkin-echo-bonus svg {
+  width: calc(12 * var(--u));
+  height: calc(12 * var(--u));
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: calc(10 * var(--u));
+  padding: calc(3 * var(--u)) calc(8 * var(--u));
+  border-radius: calc(10 * var(--u));
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.status-badge.green {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+}
+.status-badge.yellow {
+  background: rgba(234, 179, 8, 0.12);
+  color: #eab308;
+}
+.status-badge.gray {
+  background: rgba(122, 122, 122, 0.12);
+  color: #7a7a7a;
+}
+
+/* Identity tag rows */
+.identity-row {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--u));
+  padding: calc(14 * var(--u)) 0;
+  border-bottom: calc(1 * var(--u)) solid var(--border);
+}
+.identity-row:last-child {
+  border-bottom: none;
+}
+.identity-row-icon {
+  width: calc(36 * var(--u));
+  height: calc(36 * var(--u));
+  border-radius: calc(8 * var(--u));
+  background: rgba(168, 255, 61, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.identity-row-icon svg {
+  width: calc(18 * var(--u));
+  height: calc(18 * var(--u));
+  color: var(--brand);
+}
+.identity-row-info {
+  flex: 1;
+  min-width: 0;
+}
+.identity-row-name {
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  color: var(--text-main);
+}
+.identity-row-desc {
+  font-size: calc(11 * var(--u));
+  color: var(--text-sub);
+  margin-top: calc(2 * var(--u));
+}
+.identity-row-status {
+  flex-shrink: 0;
+}
+.identity-row-status svg {
+  width: calc(18 * var(--u));
+  height: calc(18 * var(--u));
+}
+.identity-row-status.earned svg {
+  color: #22c55e;
+}
+.identity-row-status.locked svg {
+  color: #7a7a7a;
+}
+
+/* ===== 7. Settings Section ===== */
+.settings-card {
+  background: var(--surface);
+  border-radius: calc(14 * var(--u));
+  border: calc(1 * var(--u)) solid var(--border);
+  overflow: hidden;
+}
+
+.settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(14 * var(--u)) calc(16 * var(--u));
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: calc(14 * var(--u));
+  color: var(--text-main);
+  border: none;
+  background: none;
+  font-family: inherit;
+  width: 100%;
+}
+.settings-item:active {
+  background: var(--surface-soft);
+}
+.settings-item:not(:last-child) {
+  border-bottom: calc(1 * var(--u)) solid var(--border);
+}
+.settings-item .arrow-svg {
+  width: calc(16 * var(--u));
+  height: calc(16 * var(--u));
+  color: var(--text-sub);
+  flex-shrink: 0;
+}
+.settings-item.logout {
+  color: #f87171;
+}
+
+/* ===== 8. Empty State ===== */
+.empty-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(48 * var(--u)) calc(24 * var(--u));
+  text-align: center;
+}
+.empty-state.visible {
+  display: flex;
+}
+.empty-state-illustration {
+  width: calc(80 * var(--u));
+  height: calc(80 * var(--u));
+  margin-bottom: calc(16 * var(--u));
+  border: calc(2 * var(--u)) dashed var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+.empty-state-illustration svg {
+  width: calc(36 * var(--u));
+  height: calc(36 * var(--u));
+  color: var(--text-sub);
+}
+.empty-state-title {
+  font-size: calc(15 * var(--u));
+  font-weight: 600;
+  color: var(--text-sub);
+  margin-bottom: calc(6 * var(--u));
+}
+.empty-state-subtitle {
+  font-size: calc(12 * var(--u));
+  color: var(--text-sub);
+  opacity: 0.7;
+}
+
+/* ===== 9. Toast Notification ===== */
+.toast {
+  position: fixed;
+  bottom: calc(100 * var(--u));
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 30, 30, 0.85);
+  backdrop-filter: blur(calc(12 * var(--u)));
+  -webkit-backdrop-filter: blur(calc(12 * var(--u)));
+  color: var(--text-main);
+  padding: calc(12 * var(--u)) calc(22 * var(--u));
+  border-radius: calc(24 * var(--u));
+  font-size: calc(13 * var(--u));
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  border: calc(1 * var(--u)) solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+}
+</style>
+
+<div class="mine-page">
+
+  <!-- ===== 1. Profile Header ===== -->
+  <div class="profile-header">
+    <div class="avatar-wrapper">
+      <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="16" r="8" fill="#7a7a7a"/>
+        <path d="M8 39c0-7.732 6.268-14 14-14s14 6.268 14 14" fill="#7a7a7a"/>
+      </svg>
+      <div class="avatar-online-dot"></div>
+    </div>
+    <div class="profile-nickname">光影捕手</div>
+    <div class="profile-bio">用镜头记录城市回声</div>
+  </div>
+
+  <!-- ===== 2. Community Identity Tags ===== -->
+  <div class="identity-tags">
+    <div class="identity-tag">
+      <svg viewBox="0 0 10 10" fill="var(--brand)"><polygon points="5,0 6.2,3.8 10,3.8 7,6.2 8.1,10 5,7.6 1.9,10 3,6.2 0,3.8 3.8,3.8"/></svg>
+      夜行者
+    </div>
+    <div class="identity-tag">
+      <svg viewBox="0 0 10 10" fill="var(--brand)"><polygon points="5,0 6.2,3.8 10,3.8 7,6.2 8.1,10 5,7.6 1.9,10 3,6.2 0,3.8 3.8,3.8"/></svg>
+      光影捕手
+    </div>
+    <div class="identity-tag">
+      <svg viewBox="0 0 10 10" fill="var(--brand)"><polygon points="5,0 6.2,3.8 10,3.8 7,6.2 8.1,10 5,7.6 1.9,10 3,6.2 0,3.8 3.8,3.8"/></svg>
+      音乐探索者
+    </div>
+    <div class="identity-tag">
+      <svg viewBox="0 0 10 10" fill="var(--brand)"><polygon points="5,0 6.2,3.8 10,3.8 7,6.2 8.1,10 5,7.6 1.9,10 3,6.2 0,3.8 3.8,3.8"/></svg>
+      市集达人
+    </div>
+    <div class="identity-tag">
+      <svg viewBox="0 0 10 10" fill="var(--brand)"><polygon points="5,0 6.2,3.8 10,3.8 7,6.2 8.1,10 5,7.6 1.9,10 3,6.2 0,3.8 3.8,3.8"/></svg>
+      回声收集者
+    </div>
+  </div>
+
+  <!-- ===== 3. Stats Grid ===== -->
+  <div class="stats-section" id="statsGrid">
+    <div class="stats-grid">
+      <div class="stat-cell"><div class="stat-value">15</div><div class="stat-label">发帖</div></div>
+      <div class="stat-cell"><div class="stat-value">32</div><div class="stat-label">评论</div></div>
+      <div class="stat-cell"><div class="stat-value">47</div><div class="stat-label">关注</div></div>
+      <div class="stat-cell"><div class="stat-value">8</div><div class="stat-label">Echo点</div></div>
+      <div class="stat-cell"><div class="stat-value">23</div><div class="stat-label">收藏</div></div>
+      <div class="stat-cell"><div class="stat-value">12</div><div class="stat-label">活动</div></div>
+      <div class="stat-cell"><div class="stat-value">9</div><div class="stat-label">路线</div></div>
+      <div class="stat-cell"><div class="stat-value">5</div><div class="stat-label">到场</div></div>
+    </div>
+  </div>
+
+  <!-- ===== 4. Badge Showcase Wall ===== -->
+  <div class="badge-wall">
+    <div class="section-title">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5L14 3.5l-1 4.5L17 8l-4 1.5L14 14l-4.5-2L8 17l-1.5-5L2 14l1-4.5L-1 8l4-1.5L2 2l4.5 2z" fill="var(--brand)"/></svg>
+      我的徽章
+    </div>
+    <div class="badge-scroll hide-scrollbar">
+      <!-- Earned badges -->
+      <div class="badge-card">
+        <div class="badge-icon-circle purple-grad">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="white"/></svg>
+        </div>
+        <div class="badge-name">夜行者</div>
+        <div class="badge-date">2周前</div>
+      </div>
+      <div class="badge-card">
+        <div class="badge-icon-circle blue-grad">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="white"/><line x1="12" y1="2" x2="12" y2="6" stroke="white" stroke-width="2"/><line x1="12" y1="18" x2="12" y2="22" stroke="white" stroke-width="2"/><line x1="2" y1="12" x2="6" y2="12" stroke="white" stroke-width="2"/><line x1="18" y1="12" x2="22" y2="12" stroke="white" stroke-width="2"/></svg>
+        </div>
+        <div class="badge-name">探索者</div>
+        <div class="badge-date">1月前</div>
+      </div>
+      <div class="badge-card">
+        <div class="badge-icon-circle orange-grad">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="white"/><path d="M4 20c0-4.418 3.582-8 8-8s8 3.582 8 8" fill="white"/></svg>
+        </div>
+        <div class="badge-name">社交达人</div>
+        <div class="badge-date">3周前</div>
+      </div>
+      <div class="badge-card">
+        <div class="badge-icon-circle green-grad">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l6-6 4 4 8-8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/></svg>
+        </div>
+        <div class="badge-name">路线大师</div>
+        <div class="badge-date">2月前</div>
+      </div>
+      <div class="badge-card">
+        <div class="badge-icon-circle brand-grad">
+          <svg viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="white"/></svg>
+        </div>
+        <div class="badge-name">回声收集者</div>
+        <div class="badge-date">1周前</div>
+      </div>
+      <!-- Locked badges -->
+      <div class="badge-card">
+        <div class="badge-icon-circle locked">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="white" stroke-width="2"/><path d="M8 11V7a4 4 0 018 0v4" stroke="white" stroke-width="2"/></svg>
+        </div>
+        <div class="badge-name">城市向导</div>
+        <div class="badge-date locked-text">未获得</div>
+      </div>
+      <div class="badge-card">
+        <div class="badge-icon-circle locked">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="white"/><rect x="2" y="16" width="20" height="3" rx="1.5" fill="white"/></svg>
+        </div>
+        <div class="badge-name">摄影诗人</div>
+        <div class="badge-date locked-text">未获得</div>
+      </div>
+      <div class="badge-card">
+        <div class="badge-icon-circle locked">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="white" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="badge-name">夜店之王</div>
+        <div class="badge-date locked-text">未获得</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 5. Content Tab Bar ===== -->
+  <div class="tab-bar-wrapper">
+    <div class="tab-bar hide-scrollbar" id="tabBar">
+      <button class="tab-item active" type="button" data-panel="posts">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm1 2h8v1H4V4zm0 3h8v1H4V7zm0 3h5v1H4v-1z"/></svg>
+        发帖
+      </button>
+      <button class="tab-item" type="button" data-panel="comments">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v7a1 1 0 01-1 1H5l-3 3V3z"/></svg>
+        评论
+      </button>
+      <button class="tab-item" type="button" data-panel="following">
+        <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="6" cy="5" r="2.5"/><circle cx="11" cy="5" r="2.5"/><path d="M1 13c0-2.5 2-4.5 5-4.5s5 2 5 4.5M8 13c0-2.5 2-4.5 5-4.5s2.5 2 2.5 4.5" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+        关注
+      </button>
+      <button class="tab-item" type="button" data-panel="bookmarks">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v12l5.5-3.5L13 15V3a1 1 0 00-1-1H3z"/></svg>
+        收藏
+      </button>
+      <button class="tab-item" type="button" data-panel="echo">
+        <svg viewBox="0 0 16 16" fill="currentColor"><polygon points="8,0 10.5,5.5 16,5.5 11.5,9 13,14.5 8,11 3,14.5 4.5,9 0,5.5 5.5,5.5"/></svg>
+        Echo点
+      </button>
+      <button class="tab-item" type="button" data-panel="activities">
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6h12M5 1v3M11 1v3"/></svg>
+        活动
+      </button>
+      <button class="tab-item" type="button" data-panel="routes">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 13l4-4 3 3 5-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="3" cy="13" r="1.5"/><circle cx="15" cy="3" r="1.5"/></svg>
+        路线
+      </button>
+      <button class="tab-item" type="button" data-panel="invitations">
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1.5" y="3" width="13" height="10" rx="2"/><path d="M1.5 3l6.5 5 6.5-5" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+        邀约
+      </button>
+      <button class="tab-item" type="button" data-panel="checkins">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5zm0 7a2 2 0 110-4 2 2 0 010 4z"/></svg>
+        到场
+      </button>
+      <button class="tab-item" type="button" data-panel="identity">
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="1" width="8" height="10" rx="1.5"/><rect x="2" y="12" width="8" height="3" rx="1"/><circle cx="12" cy="5" r="2.5"/></svg>
+        身份
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== 6. Content Panels ===== -->
+  <div class="content-panels" id="contentPanels">
+
+    <!-- Panel: 发帖 (posts) -->
+    <div class="content-panel active" data-panel="posts">
+      <div class="panel-card">
+        <div class="panel-card-text">今晚在废墟园区拍到了一组绝美的光影照片，锈迹和阳光的碰撞太迷人了 &#x1F525;</div>
+        <div class="panel-card-meta">
+          <div class="panel-card-time">2小时前</div>
+          <div class="panel-card-stats">
+            <span><svg viewBox="0 0 13 13" fill="currentColor"><path d="M6.5 11.5C3.462 11.5 1 9.485 1 7s2.462-4.5 5.5-4.5S12 4.515 12 7s-2.462 4.5-5.5 4.5zm0-8C4.015 3.5 2 5.067 2 7s2.015 3.5 4.5 3.5S11 8.933 11 7 8.985 3.5 6.5 3.5z"/></svg> 24</span>
+            <span><svg viewBox="0 0 13 13" fill="currentColor"><path d="M2 2.5a1 1 0 011-1h7a1 1 0 011 1v6a1 1 0 01-1 1H4.5L2 11.5v-9z"/></svg> 8</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-card-text">先锋书店的午后，一杯咖啡一本书，这才是周末该有的样子</div>
+        <div class="panel-card-meta">
+          <div class="panel-card-time">1天前</div>
+          <div class="panel-card-stats">
+            <span><svg viewBox="0 0 13 13" fill="currentColor"><path d="M6.5 11.5C3.462 11.5 1 9.485 1 7s2.462-4.5 5.5-4.5S12 4.515 12 7s-2.462 4.5-5.5 4.5zm0-8C4.015 3.5 2 5.067 2 7s2.015 3.5 4.5 3.5S11 8.933 11 7 8.985 3.5 6.5 3.5z"/></svg> 56</span>
+            <span><svg viewBox="0 0 13 13" fill="currentColor"><path d="M2 2.5a1 1 0 011-1h7a1 1 0 011 1v6a1 1 0 01-1 1H4.5L2 11.5v-9z"/></svg> 12</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-card-text">推荐一个超棒的Livehouse！昨晚三支乐队的演出炸裂了</div>
+        <div class="panel-card-meta">
+          <div class="panel-card-time">3天前</div>
+          <div class="panel-card-stats">
+            <span><svg viewBox="0 0 13 13" fill="currentColor"><path d="M6.5 11.5C3.462 11.5 1 9.485 1 7s2.462-4.5 5.5-4.5S12 4.515 12 7s-2.462 4.5-5.5 4.5zm0-8C4.015 3.5 2 5.067 2 7s2.015 3.5 4.5 3.5S11 8.933 11 7 8.985 3.5 6.5 3.5z"/></svg> 89</span>
+            <span><svg viewBox="0 0 13 13" fill="currentColor"><path d="M2 2.5a1 1 0 011-1h7a1 1 0 011 1v6a1 1 0 01-1 1H4.5L2 11.5v-9z"/></svg> 31</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: 评论 (comments) -->
+    <div class="content-panel" data-panel="comments">
+      <div class="panel-card comment-card">
+        <div class="panel-card-text">照片拍得太好了！请问这个园区具体在哪里？</div>
+        <div class="quoted-post">
+          <svg viewBox="0 0 12 12" fill="currentColor"><path d="M2 1a1 1 0 00-1 1v8l2-2h6a1 1 0 001-1V2a1 1 0 00-1-1H2z"/></svg>
+          回复于「今晚在废墟园区拍到了一组...」
+        </div>
+        <div class="panel-card-time">2天前</div>
+      </div>
+      <div class="panel-card comment-card">
+        <div class="panel-card-text">同感，先锋书店真的是南京的灵魂地标</div>
+        <div class="quoted-post">
+          <svg viewBox="0 0 12 12" fill="currentColor"><path d="M2 1a1 1 0 00-1 1v8l2-2h6a1 1 0 001-1V2a1 1 0 00-1-1H2z"/></svg>
+          回复于「推荐一个超棒的Livehouse...」
+        </div>
+        <div class="panel-card-time">3天前</div>
+      </div>
+    </div>
+
+    <!-- Panel: 关注 (following) -->
+    <div class="content-panel" data-panel="following">
+      <div class="panel-card follow-card">
+        <div class="follow-avatar">夜</div>
+        <div class="follow-info">
+          <div class="follow-nickname">夜行者</div>
+          <div class="follow-bio">深夜探险家</div>
+          <div class="follow-time">关注于 2周前</div>
+        </div>
+      </div>
+      <div class="panel-card follow-card">
+        <div class="follow-avatar">市</div>
+        <div class="follow-info">
+          <div class="follow-nickname">市集猎人</div>
+          <div class="follow-bio">发现城市好物</div>
+          <div class="follow-time">关注于 1月前</div>
+        </div>
+      </div>
+      <div class="panel-card follow-card">
+        <div class="follow-avatar">音</div>
+        <div class="follow-info">
+          <div class="follow-nickname">音乐旅人</div>
+          <div class="follow-bio">用耳朵丈量城市</div>
+          <div class="follow-time">关注于 3天前</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: 收藏 (bookmarks) -->
+    <div class="content-panel" data-panel="bookmarks">
+      <div class="panel-card bookmark-card">
+        <div class="bookmark-header">
+          <div class="bookmark-title">秦淮独立音乐夜</div>
+          <svg class="bookmark-bookmark-icon" viewBox="0 0 16 16" fill="var(--brand)"><path d="M3 2a1 1 0 00-1 1v12l5.5-3.5L13 15V3a1 1 0 00-1-1H3z"/></svg>
+        </div>
+        <div class="bookmark-tags">音乐 / 市集</div>
+        <div class="bookmark-time-row">收藏于 3天前</div>
+      </div>
+      <div class="panel-card bookmark-card">
+        <div class="bookmark-header">
+          <div class="bookmark-title">先锋书店</div>
+          <svg class="bookmark-bookmark-icon" viewBox="0 0 16 16" fill="var(--brand)"><path d="M3 2a1 1 0 00-1 1v12l5.5-3.5L13 15V3a1 1 0 00-1-1H3z"/></svg>
+        </div>
+        <div class="bookmark-tags">书店</div>
+        <div class="bookmark-time-row">收藏于 1周前</div>
+      </div>
+    </div>
+
+    <!-- Panel: Echo点 (echo) -->
+    <div class="content-panel" data-panel="echo">
+      <div class="panel-card echo-card">
+        <div class="echo-info">
+          <div class="echo-location">先锋书店</div>
+          <div class="echo-meta">
+            <span><svg viewBox="0 0 11 11" fill="currentColor"><path d="M5.5 1a3.5 3.5 0 00-3.5 3.5c0 2.5 3.5 6 3.5 6s3.5-3.5 3.5-6A3.5 3.5 0 005.5 1z"/></svg>打卡 12 次</span>
+            <span>最近 3天前</span>
+          </div>
+        </div>
+        <div class="echo-value">
+          <div class="echo-value-num">86</div>
+          <div class="echo-value-bar"><div class="echo-value-bar-fill" style="width:86%"></div></div>
+        </div>
+      </div>
+      <div class="panel-card echo-card">
+        <div class="echo-info">
+          <div class="echo-location">老门东</div>
+          <div class="echo-meta">
+            <span><svg viewBox="0 0 11 11" fill="currentColor"><path d="M5.5 1a3.5 3.5 0 00-3.5 3.5c0 2.5 3.5 6 3.5 6s3.5-3.5 3.5-6A3.5 3.5 0 005.5 1z"/></svg>打卡 8 次</span>
+            <span>最近 1周前</span>
+          </div>
+        </div>
+        <div class="echo-value">
+          <div class="echo-value-num">72</div>
+          <div class="echo-value-bar"><div class="echo-value-bar-fill" style="width:72%"></div></div>
+        </div>
+      </div>
+      <div class="panel-card echo-card">
+        <div class="echo-info">
+          <div class="echo-location">玄武湖</div>
+          <div class="echo-meta">
+            <span><svg viewBox="0 0 11 11" fill="currentColor"><path d="M5.5 1a3.5 3.5 0 00-3.5 3.5c0 2.5 3.5 6 3.5 6s3.5-3.5 3.5-6A3.5 3.5 0 005.5 1z"/></svg>打卡 5 次</span>
+            <span>最近 2周前</span>
+          </div>
+        </div>
+        <div class="echo-value">
+          <div class="echo-value-num">58</div>
+          <div class="echo-value-bar"><div class="echo-value-bar-fill" style="width:58%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: 活动 (activities) -->
+    <div class="content-panel" data-panel="activities">
+      <div class="panel-card activity-card">
+        <div class="activity-thumb thumb-purple">
+          <svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="11" r="6" stroke="white" stroke-width="2" fill="none"/><rect x="8" y="19" width="12" height="2" rx="1" fill="white"/></svg>
+        </div>
+        <div class="activity-details">
+          <div class="activity-name">废墟摄影夜行</div>
+          <div class="activity-meta">
+            <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M5.5 3v2.5L7.5 7"/></svg>今晚 19:30</span>
+            <span>老工业园区</span>
+          </div>
+        </div>
+        <div class="status-badge green">即将开始</div>
+      </div>
+      <div class="panel-card activity-card">
+        <div class="activity-thumb thumb-blue">
+          <svg viewBox="0 0 28 28" fill="none"><path d="M9 6v15l5-3 5 3V6a2 2 0 00-2-2h-6a2 2 0 00-2 2z" stroke="white" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="activity-details">
+          <div class="activity-name">地下乐队演出</div>
+          <div class="activity-meta">
+            <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M5.5 3v2.5L7.5 7"/></svg>明天 21:00</span>
+            <span>隐秘Livehouse</span>
+          </div>
+        </div>
+        <div class="status-badge green">即将开始</div>
+      </div>
+      <div class="panel-card activity-card">
+        <div class="activity-thumb thumb-green">
+          <svg viewBox="0 0 28 28" fill="none"><path d="M7 14c0-3.5 2.5-7 7-7s7 3.5 7 7M14 7v10" stroke="white" stroke-width="2"/></svg>
+        </div>
+        <div class="activity-details">
+          <div class="activity-name">春日野餐会</div>
+          <div class="activity-meta">
+            <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M5.5 3v2.5L7.5 7"/></svg>上周</span>
+            <span>玄武湖公园</span>
+          </div>
+        </div>
+        <div class="status-badge gray">已结束</div>
+      </div>
+    </div>
+
+    <!-- Panel: 路线 (routes) -->
+    <div class="content-panel" data-panel="routes">
+      <div class="panel-card route-card">
+        <div class="route-header">
+          <div class="route-title">周五夜晚独立音乐路线</div>
+          <div class="status-badge green">已完成</div>
+        </div>
+        <div class="route-meta">
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="1.5"/><circle cx="5.5" cy="2" r="1"/><circle cx="5.5" cy="9" r="1"/></svg>4站</span>
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M5.5 3v2.5L7.5 7"/></svg>2.9h</span>
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="5" stroke="currentColor" stroke-width="1"/><text x="5.5" y="8" text-anchor="middle" font-size="6" fill="currentColor">¥</text></svg>¥69</span>
+        </div>
+        <div class="route-time">创建于 2周前</div>
+      </div>
+      <div class="panel-card route-card">
+        <div class="route-header">
+          <div class="route-title">周末白天文艺市集路线</div>
+          <div class="status-badge yellow">规划中</div>
+        </div>
+        <div class="route-meta">
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="1.5"/><circle cx="5.5" cy="2" r="1"/><circle cx="5.5" cy="9" r="1"/></svg>3站</span>
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M5.5 3v2.5L7.5 7"/></svg>3.5h</span>
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="5" stroke="currentColor" stroke-width="1"/><text x="5.5" y="8" text-anchor="middle" font-size="6" fill="currentColor">¥</text></svg>¥120</span>
+        </div>
+        <div class="route-time">创建于 3天前</div>
+      </div>
+      <div class="panel-card route-card">
+        <div class="route-header">
+          <div class="route-title">鼓楼深夜文艺路线</div>
+          <div class="status-badge green">已完成</div>
+        </div>
+        <div class="route-meta">
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="1.5"/><circle cx="5.5" cy="2" r="1"/><circle cx="5.5" cy="9" r="1"/></svg>5站</span>
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M5.5 3v2.5L7.5 7"/></svg>4h</span>
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="5" stroke="currentColor" stroke-width="1"/><text x="5.5" y="8" text-anchor="middle" font-size="6" fill="currentColor">¥</text></svg>¥80</span>
+        </div>
+        <div class="route-time">创建于 1月前</div>
+      </div>
+    </div>
+
+    <!-- Panel: 邀约 (invitations) -->
+    <div class="content-panel" data-panel="invitations">
+      <div class="panel-card invitation-card">
+        <div class="invitation-header">
+          <div class="invitation-title">周五废墟摄影局</div>
+          <div class="status-badge green">进行中</div>
+        </div>
+        <div class="invitation-init">由 光影捕手 发起</div>
+        <div class="invitation-meta">
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M5.5 3v2.5L7.5 7"/></svg>今晚 19:00</span>
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><path d="M5.5 1a3.5 3.5 0 00-3.5 3.5c0 2.5 3.5 6 3.5 6s3.5-3.5 3.5-6A3.5 3.5 0 005.5 1z"/></svg>老工业园区</span>
+        </div>
+      </div>
+      <div class="panel-card invitation-card">
+        <div class="invitation-header">
+          <div class="invitation-title">周末Livehouse之夜</div>
+          <div class="status-badge yellow">待确认</div>
+        </div>
+        <div class="invitation-init">由 音乐旅人 发起</div>
+        <div class="invitation-meta">
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M5.5 3v2.5L7.5 7"/></svg>明天 20:00</span>
+          <span><svg viewBox="0 0 11 11" fill="currentColor"><path d="M5.5 1a3.5 3.5 0 00-3.5 3.5c0 2.5 3.5 6 3.5 6s3.5-3.5 3.5-6A3.5 3.5 0 005.5 1z"/></svg>隐秘Livehouse</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: 到场 (checkins) -->
+    <div class="content-panel" data-panel="checkins">
+      <div class="panel-card checkin-card">
+        <div class="activity-name">废墟摄影夜行</div>
+        <div class="checkin-meta">
+          <svg viewBox="0 0 11 11" fill="currentColor"><path d="M5.5 1a3.5 3.5 0 00-3.5 3.5c0 2.5 3.5 6 3.5 6s3.5-3.5 3.5-6A3.5 3.5 0 005.5 1z"/></svg>
+          老工业园区
+        </div>
+        <div class="checkin-meta" style="margin-top:4px">到场 6月15日 19:32</div>
+        <div class="checkin-echo-bonus">
+          <svg viewBox="0 0 12 12" fill="currentColor"><polygon points="6,0 7.8,4.2 12,4.2 8.4,6.6 9.6,10.8 6,8.4 2.4,10.8 3.6,6.6 0,4.2 4.2,4.2"/></svg>
+          Echo +12
+        </div>
+      </div>
+      <div class="panel-card checkin-card">
+        <div class="activity-name">地下乐队演出</div>
+        <div class="checkin-meta">
+          <svg viewBox="0 0 11 11" fill="currentColor"><path d="M5.5 1a3.5 3.5 0 00-3.5 3.5c0 2.5 3.5 6 3.5 6s3.5-3.5 3.5-6A3.5 3.5 0 005.5 1z"/></svg>
+          隐秘Livehouse
+        </div>
+        <div class="checkin-meta" style="margin-top:4px">到场 6月8日 21:05</div>
+        <div class="checkin-echo-bonus">
+          <svg viewBox="0 0 12 12" fill="currentColor"><polygon points="6,0 7.8,4.2 12,4.2 8.4,6.6 9.6,10.8 6,8.4 2.4,10.8 3.6,6.6 0,4.2 4.2,4.2"/></svg>
+          Echo +8
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: 身份 (identity) -->
+    <div class="content-panel" data-panel="identity">
+      <div class="panel-card">
+        <div class="identity-row">
+          <div class="identity-row-icon">
+            <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="7" r="3.5" stroke="var(--brand)" stroke-width="1.5"/><path d="M3 16c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="var(--brand)" stroke-width="1.5"/></svg>
+          </div>
+          <div class="identity-row-info">
+            <div class="identity-row-name">夜行者</div>
+            <div class="identity-row-desc">深夜探索次数 >= 5次</div>
+          </div>
+          <div class="identity-row-status earned">
+            <svg viewBox="0 0 18 18" fill="currentColor"><path d="M9 1a8 8 0 100 16A8 8 0 009 1zm4.2 5.9l-5 5a1 1 0 01-1.4 0l-2.5-2.5a1 1 0 111.4-1.4L7.5 9.8l4.3-4.3a1 1 0 111.4 1.4z"/></svg>
+          </div>
+        </div>
+        <div class="identity-row">
+          <div class="identity-row-icon">
+            <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="var(--brand)" stroke-width="1.5"/><circle cx="9" cy="9" r="2.5" fill="var(--brand)"/></svg>
+          </div>
+          <div class="identity-row-info">
+            <div class="identity-row-name">光影捕手</div>
+            <div class="identity-row-desc">发布摄影类帖子 >= 10篇</div>
+          </div>
+          <div class="identity-row-status earned">
+            <svg viewBox="0 0 18 18" fill="currentColor"><path d="M9 1a8 8 0 100 16A8 8 0 009 1zm4.2 5.9l-5 5a1 1 0 01-1.4 0l-2.5-2.5a1 1 0 111.4-1.4L7.5 9.8l4.3-4.3a1 1 0 111.4 1.4z"/></svg>
+          </div>
+        </div>
+        <div class="identity-row">
+          <div class="identity-row-icon">
+            <svg viewBox="0 0 18 18" fill="none"><path d="M6 3v10l3-2 3 2V3a1 1 0 00-1-1H7a1 1 0 00-1 1z" stroke="var(--brand)" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div class="identity-row-info">
+            <div class="identity-row-name">音乐探索者</div>
+            <div class="identity-row-desc">参加音乐类活动 >= 3次</div>
+          </div>
+          <div class="identity-row-status earned">
+            <svg viewBox="0 0 18 18" fill="currentColor"><path d="M9 1a8 8 0 100 16A8 8 0 009 1zm4.2 5.9l-5 5a1 1 0 01-1.4 0l-2.5-2.5a1 1 0 111.4-1.4L7.5 9.8l4.3-4.3a1 1 0 111.4 1.4z"/></svg>
+          </div>
+        </div>
+        <div class="identity-row">
+          <div class="identity-row-icon">
+            <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="var(--brand)" stroke-width="1.5"/><path d="M6 7h6M6 10h6M6 13h4" stroke="var(--brand)" stroke-width="1.2"/></svg>
+          </div>
+          <div class="identity-row-info">
+            <div class="identity-row-name">市集达人</div>
+            <div class="identity-row-desc">打卡市集类地点 >= 5次</div>
+          </div>
+          <div class="identity-row-status earned">
+            <svg viewBox="0 0 18 18" fill="currentColor"><path d="M9 1a8 8 0 100 16A8 8 0 009 1zm4.2 5.9l-5 5a1 1 0 01-1.4 0l-2.5-2.5a1 1 0 111.4-1.4L7.5 9.8l4.3-4.3a1 1 0 111.4 1.4z"/></svg>
+          </div>
+        </div>
+        <div class="identity-row">
+          <div class="identity-row-icon">
+            <svg viewBox="0 0 18 18" fill="none"><polygon points="9,1 11.5,6.5 17,6.5 12.5,10 14,15.5 9,12 4,15.5 5.5,10 1,6.5 6.5,6.5" stroke="var(--brand)" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div class="identity-row-info">
+            <div class="identity-row-name">回声收集者</div>
+            <div class="identity-row-desc">Echo 值 >= 100</div>
+          </div>
+          <div class="identity-row-status earned">
+            <svg viewBox="0 0 18 18" fill="currentColor"><path d="M9 1a8 8 0 100 16A8 8 0 009 1zm4.2 5.9l-5 5a1 1 0 01-1.4 0l-2.5-2.5a1 1 0 111.4-1.4L7.5 9.8l4.3-4.3a1 1 0 111.4 1.4z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== 7. Settings Section ===== -->
+  <div class="section-title">
+    <svg viewBox="0 0 16 16" fill="var(--text-sub)"><path d="M8 10a2 2 0 100-4 2 2 0 000 4z"/><path d="M13.5 8a5.5 5.5 0 01-1.2 3.5l1.5 1.5-1.4 1.4-1.5-1.5A5.5 5.5 0 018 13.5a5.5 5.5 0 01-3.5-1.2L3 13.8l-1.4-1.4 1.5-1.5A5.5 5.5 0 012.5 8a5.5 5.5 0 011.2-3.5L2.2 3l1.4-1.4 1.5 1.5A5.5 5.5 0 018 2.5a5.5 5.5 0 013.5 1.2L13 2.2l1.4 1.4-1.5 1.5A5.5 5.5 0 0113.5 8z"/></svg>
+    设置
+  </div>
+  <div class="settings-card" id="settingsCard">
+    <button class="settings-item" type="button" data-toast="编辑资料功能开发中">
+      编辑资料
+      <svg class="arrow-svg" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="settings-item" type="button" data-toast="通知设置功能开发中">
+      通知设置
+      <svg class="arrow-svg" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="settings-item" type="button" data-toast="隐私设置功能开发中">
+      隐私设置
+      <svg class="arrow-svg" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="settings-item" type="button" data-toast="关于 Echoland v1.0.0">
+      关于
+      <svg class="arrow-svg" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="settings-item logout" type="button" data-toast="已退出登录">
+      退出登录
+      <svg class="arrow-svg" viewBox="0 0 16 16" fill="currentColor" style="color:#f87171"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <!-- ===== 8. Empty State ===== -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-state-illustration">
+      <svg viewBox="0 0 36 36" fill="none"><rect x="4" y="4" width="28" height="28" rx="6" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M13 16h10M13 21h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <div class="empty-state-title">暂无内容</div>
+    <div class="empty-state-subtitle" id="emptyStateSubtitle">这里还没有内容，快去探索吧</div>
+  </div>
+
+  <!-- ===== 9. Toast Notification ===== -->
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== Tab Switching =====
+  const tabBar = document.getElementById('tabBar');
+  const tabItems = tabBar.querySelectorAll('.tab-item');
+  const contentPanels = document.getElementById('contentPanels');
+  const panels = contentPanels.querySelectorAll('.content-panel');
+  const emptyState = document.getElementById('emptyState');
+  const emptyStateSubtitle = document.getElementById('emptyStateSubtitle');
+
+  const panelSubtitles = {
+    posts: '还没有发布过帖子',
+    comments: '还没有发表过评论',
+    following: '还没有关注任何人',
+    bookmarks: '还没有收藏任何内容',
+    echo: '还没有Echo点记录',
+    activities: '还没有参加过活动',
+    routes: '还没有创建过路线',
+    invitations: '还没有收到邀约',
+    checkins: '还没有到场记录',
+    identity: '还没有获得身份标签'
+  };
+
+  function switchTab(panelName) {
+    // Update tab active states
+    tabItems.forEach(function(item) {
+      if (item.getAttribute('data-panel') === panelName) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+
+    // Update panel visibility
+    panels.forEach(function(panel) {
+      if (panel.getAttribute('data-panel') === panelName) {
+        panel.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+
+    // Hide empty state when switching tabs
+    emptyState.classList.remove('visible');
+
+    // Auto-scroll selected tab into view
+    var activeTab = tabBar.querySelector('.tab-item.active');
+    if (activeTab) {
+      activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  tabItems.forEach(function(item) {
+    item.addEventListener('click', function() {
+      var panelName = item.getAttribute('data-panel');
+      switchTab(panelName);
+    });
+  });
+
+  // ===== Toast System =====
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  function showToast(message) {
+    if (toastTimer) {
+      clearTimeout(toastTimer);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+      toastTimer = null;
+    }, 1800);
+  }
+
+  // ===== Settings Click → Toast =====
+  var settingsCard = document.getElementById('settingsCard');
+  var settingsItems = settingsCard.querySelectorAll('.settings-item');
+  settingsItems.forEach(function(item) {
+    item.addEventListener('click', function() {
+      var msg = item.getAttribute('data-toast') || '功能开发中';
+      showToast(msg);
+    });
+  });
+
+  // ===== Empty State Toggle (double-click stats for demo) =====
+  var statsGrid = document.getElementById('statsGrid');
+  var emptyVisible = false;
+
+  statsGrid.addEventListener('dblclick', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!emptyVisible) {
+      // Find current active panel
+      var activePanel = contentPanels.querySelector('.content-panel.active');
+      var panelName = activePanel ? activePanel.getAttribute('data-panel') : 'posts';
+      var subtitle = panelSubtitles[panelName] || '这里还没有内容，快去探索吧';
+      emptyStateSubtitle.textContent = subtitle;
+      emptyState.classList.add('visible');
+      // Hide all panels
+      panels.forEach(function(p) { p.classList.remove('active'); });
+      emptyVisible = true;
+    } else {
+      emptyState.classList.remove('visible');
+      // Restore the previously active panel
+      var activeTab = tabBar.querySelector('.tab-item.active');
+      if (activeTab) {
+        var panelName = activeTab.getAttribute('data-panel');
+        panels.forEach(function(p) {
+          if (p.getAttribute('data-panel') === panelName) {
+            p.classList.add('active');
+          }
+        });
+      }
+      emptyVisible = false;
+    }
+  });
+
+  // ===== Badge Scroll Momentum =====
+  var badgeScroll = document.querySelector('.badge-scroll');
+  if (badgeScroll) {
+    var isDown = false;
+    var startX = 0;
+    var scrollLeft = 0;
+
+    badgeScroll.addEventListener('mousedown', function(e) {
+      isDown = true;
+      badgeScroll.style.cursor = 'grabbing';
+      startX = e.pageX - badgeScroll.offsetLeft;
+      scrollLeft = badgeScroll.scrollLeft;
+    });
+
+    badgeScroll.addEventListener('mouseleave', function() {
+      isDown = false;
+      badgeScroll.style.cursor = 'grab';
+    });
+
+    badgeScroll.addEventListener('mouseup', function() {
+      isDown = false;
+      badgeScroll.style.cursor = 'grab';
+    });
+
+    badgeScroll.addEventListener('mousemove', function(e) {
+      if (!isDown) return;
+      e.preventDefault();
+      var x = e.pageX - badgeScroll.offsetLeft;
+      var walk = (x - startX) * 1.5;
+      badgeScroll.scrollLeft = scrollLeft - walk;
+    });
+
+    badgeScroll.style.cursor = 'grab';
+  }
+
+  // ===== Touch-friendly tab bar scroll =====
+  var tabBarEl = document.getElementById('tabBar');
+  if (tabBarEl) {
+    var isTabDown = false;
+    var tabStartX = 0;
+    var tabScrollLeft = 0;
+
+    tabBarEl.addEventListener('touchstart', function(e) {
+      isTabDown = true;
+      tabStartX = e.touches[0].pageX - tabBarEl.offsetLeft;
+      tabScrollLeft = tabBarEl.scrollLeft;
+    }, { passive: true });
+
+    tabBarEl.addEventListener('touchend', function() {
+      isTabDown = false;
+    });
+
+    tabBarEl.addEventListener('touchmove', function(e) {
+      if (!isTabDown) return;
+      var x = e.touches[0].pageX - tabBarEl.offsetLeft;
+      var walk = (x - tabStartX) * 1.5;
+      tabBarEl.scrollLeft = tabScrollLeft - walk;
+    }, { passive: true });
+  }
+
+})();
+</script>
