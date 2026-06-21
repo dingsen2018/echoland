@@ -31,23 +31,34 @@
     font-size: calc(22 * var(--u));
     font-weight: 700;
   }
-.route-back-btn {
-  display: grid;
-  place-items: center;
-  width: calc(36 * var(--u));
-  height: calc(36 * var(--u));
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--text-main);
-  transition: transform .18s ease;
-}
-.route-back-btn:active { transform: scale(.94); }
-.route-back-btn svg {
-  width: calc(20 * var(--u));
-  height: calc(20 * var(--u));
-  fill: currentColor;
+  .route-branding {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(3 * var(--u));
+  }
+  .route-logo {
+    display: block;
+    width: calc(132 * var(--u));
+    height: auto;
+  }
+  .route-back-btn {
+    display: grid;
+    place-items: center;
+    width: calc(36 * var(--u));
+    height: calc(36 * var(--u));
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--text-main);
+    transition: transform .18s ease;
+  }
+  .route-back-btn:active { transform: scale(.94); }
+  .route-back-btn svg {
+    width: calc(20 * var(--u));
+    height: calc(20 * var(--u));
+    fill: currentColor;
   }
   .route-city {
     display: flex;
@@ -384,6 +395,29 @@
     padding: calc(20 * var(--u)) calc(16 * var(--u)) calc(100 * var(--u));
   }
   .route-generating.show { display: block; }
+  .route-gen-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: calc(16 * var(--u));
+  }
+  .route-toast {
+    position: fixed;
+    top: calc(60 * var(--u));
+    left: 50%;
+    transform: translateX(-50%);
+    padding: calc(10 * var(--u)) calc(18 * var(--u));
+    background: rgba(30, 30, 30, .92);
+    border-radius: calc(10 * var(--u));
+    color: #fff;
+    font-size: calc(13 * var(--u));
+    z-index: 999;
+    animation: toastFade .3s ease;
+  }
+  @keyframes toastFade {
+    from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
   .route-gen-status {
     display: flex;
     align-items: center;
@@ -1216,9 +1250,7 @@
 
 <div class="route-page" id="routeHomeView">
   <div class="route-header">
-    <button class="route-back-btn" type="button" onclick="switchTab('tab-home')" aria-label="返回首页">
-      <svg viewBox="0 0 24 24"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12Z"/></svg>
-    </button>
+    <div class="route-branding"><img class="route-logo" src="assets/icons/community-logo.png" alt="Echoland 回声地"></div>
     <button class="home-location route-city" type="button" onclick="routeToggleCity()" aria-label="当前城市：南京">
       <span class="home-location-pin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.8A2.8 2.8 0 1 1 12 6a2.8 2.8 0 0 1 0 5.8Z"/></svg></span>
       <span class="route-city-name">南京</span><span class="home-location-arrow" aria-hidden="true"></span>
@@ -1252,6 +1284,14 @@
 </div>
 
 <div class="route-generating" id="routeGenView">
+  <div class="route-gen-header">
+    <button class="route-back-btn" type="button" onclick="routeBackToHome()" aria-label="返回">
+      <svg viewBox="0 0 24 24"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12Z"/></svg>
+    </button>
+    <button class="route-back-btn" type="button" onclick="routeSaveToMine()" aria-label="保存到我的路线">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+    </button>
+  </div>
   <div class="route-gen-status">
     &#9733; <span id="routeGenText"></span><span class="route-gen-cursor"></span>
   </div>
@@ -1856,6 +1896,22 @@
         { timeout: 5000, maximumAge: 60000 }
       );
     }
+  };
+
+  window.routeBackToHome = function() {
+    routeGenTimers.forEach(t => clearInterval(t));
+    routeGenTimers = [];
+    document.getElementById('routeGenView').classList.remove('show');
+    document.getElementById('routeBottomBar').classList.remove('show');
+    document.getElementById('routeHomeView').style.display = 'block';
+  };
+
+  window.routeSaveToMine = function() {
+    let toast = document.createElement('div');
+    toast.className = 'route-toast';
+    toast.textContent = '已保存到「我的路线」';
+    document.querySelector('.route-generating').appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
   };
 
   window.routeCloseNav = function() {

@@ -672,10 +672,11 @@
       z-index: 60;
       display: none;
       width: min(100vw, calc(430 * var(--u)));
-      height: 100dvh;
+      height: var(--vvh, 100dvh);
       overflow: hidden;
       background: #080a0d;
       transform: translateX(-50%);
+      transition: height .12s ease-out;
     }
 
     .community-compose.open,
@@ -1432,6 +1433,7 @@
       function openCompose(focusImage = false) {
         composePage.classList.add('open');
         document.body.classList.add('community-compose-open');
+        if (window.visualViewport) composePage.style.setProperty('--vvh', window.visualViewport.height + 'px');
         requestAnimationFrame(() => {
           composeText.focus();
           if (focusImage) document.getElementById('compose-file').click();
@@ -1734,6 +1736,16 @@
       window.addEventListener('storage', event => {
         if (event.key === STORAGE_KEY) { state.savedPosts = readSavedPosts(); renderFeed(); }
       });
+
+      /* ── visualViewport: 工具栏随键盘上移 ── */
+      if (window.visualViewport) {
+        const updateVVH = () => {
+          const h = window.visualViewport.height;
+          composePage.style.setProperty('--vvh', h + 'px');
+        };
+        window.visualViewport.addEventListener('resize', updateVVH);
+        window.visualViewport.addEventListener('scroll', updateVVH);
+      }
 
       renderFeed();
       updateCompose();
