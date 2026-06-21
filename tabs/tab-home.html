@@ -2,13 +2,16 @@
   <style>
     .home-page {
       padding: calc(26 * var(--u)) calc(18 * var(--u)) 0;
+      color: var(--text-main);
     }
 
+    /* ---------- 顶部品牌区 ---------- */
     .home-topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: calc(16 * var(--u));
+      margin-bottom: calc(18 * var(--u));
     }
 
     .home-logo {
@@ -27,7 +30,6 @@
       color: var(--text-main);
       font-size: calc(16 * var(--u));
       font-weight: 600;
-      letter-spacing: 0;
       white-space: nowrap;
     }
 
@@ -52,6 +54,1102 @@
       border-bottom: calc(2 * var(--u)) solid rgba(255, 255, 255, .86);
       transform: rotate(45deg) translateY(calc(-2 * var(--u)));
     }
+
+    /* ---------- 搜索栏 ---------- */
+    .home-search {
+      position: relative;
+      margin-bottom: calc(18 * var(--u));
+    }
+
+    .home-search-input {
+      width: 100%;
+      height: calc(46 * var(--u));
+      padding: 0 calc(80 * var(--u)) 0 calc(44 * var(--u));
+      border: 1px solid var(--border);
+      border-radius: calc(23 * var(--u));
+      background: var(--surface-soft);
+      color: var(--text-main);
+      font-size: calc(14 * var(--u));
+      outline: none;
+    }
+
+    .home-search-input::placeholder {
+      color: var(--text-sub);
+    }
+
+    .home-search-input:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 calc(3 * var(--u)) rgba(168, 255, 61, .12);
+    }
+
+    .home-search-icon {
+      position: absolute;
+      left: calc(16 * var(--u));
+      top: 50%;
+      width: calc(18 * var(--u));
+      height: calc(18 * var(--u));
+      color: var(--text-sub);
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .home-search-icon svg {
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
+    }
+
+    .home-search-actions {
+      position: absolute;
+      right: calc(12 * var(--u));
+      top: 50%;
+      display: flex;
+      align-items: center;
+      gap: calc(8 * var(--u));
+      transform: translateY(-50%);
+    }
+
+    .home-search-action {
+      display: grid;
+      place-items: center;
+      width: calc(28 * var(--u));
+      height: calc(28 * var(--u));
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--text-sub);
+    }
+
+    .home-search-action svg {
+      width: calc(20 * var(--u));
+      height: calc(20 * var(--u));
+      fill: currentColor;
+    }
+
+    /* ---------- 分类筛选 ---------- */
+    .home-categories {
+      display: flex;
+      gap: calc(10 * var(--u));
+      margin-bottom: calc(18 * var(--u));
+      overflow-x: auto;
+      padding-bottom: calc(4 * var(--u));
+      scrollbar-width: none;
+    }
+
+    .home-categories::-webkit-scrollbar {
+      display: none;
+    }
+
+    .home-category {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: calc(6 * var(--u));
+      height: calc(36 * var(--u));
+      padding: 0 calc(14 * var(--u));
+      border: 1px solid var(--border);
+      border-radius: calc(18 * var(--u));
+      background: var(--surface);
+      color: var(--text-sub);
+      font-size: calc(13 * var(--u));
+      font-weight: 500;
+      transition: all .18s ease;
+    }
+
+    .home-category svg {
+      width: calc(16 * var(--u));
+      height: calc(16 * var(--u));
+      fill: currentColor;
+    }
+
+    .home-category.active {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: #05080d;
+      box-shadow: 0 calc(4 * var(--u)) calc(14 * var(--u)) rgba(168, 255, 61, .24);
+    }
+
+    .home-category:active {
+      transform: scale(.96);
+    }
+
+    .home-filter-btn {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: calc(36 * var(--u));
+      height: calc(36 * var(--u));
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--text-sub);
+      margin-left: auto;
+    }
+
+    .home-filter-btn svg {
+      width: calc(18 * var(--u));
+      height: calc(18 * var(--u));
+      fill: currentColor;
+    }
+
+    /* ---------- 时间筛选浮层 ---------- */
+    .home-time-sheet {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: rgba(0, 0, 0, .6);
+    }
+
+    .home-time-sheet.open {
+      display: flex;
+    }
+
+    .home-time-sheet-body {
+      padding: calc(20 * var(--u)) calc(18 * var(--u)) calc(24 * var(--u));
+      border-radius: calc(24 * var(--u)) calc(24 * var(--u)) 0 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      transform: translateY(100%);
+      transition: transform .25s ease;
+    }
+
+    .home-time-sheet.open .home-time-sheet-body {
+      transform: translateY(0);
+    }
+
+    .home-time-sheet-title {
+      margin: 0 0 calc(16 * var(--u));
+      font-size: calc(17 * var(--u));
+      font-weight: 700;
+    }
+
+    .home-time-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: calc(10 * var(--u));
+      margin-bottom: calc(18 * var(--u));
+    }
+
+    .home-time-option {
+      height: calc(44 * var(--u));
+      border: 1px solid var(--border);
+      border-radius: calc(12 * var(--u));
+      background: var(--surface-soft);
+      color: var(--text-sub);
+      font-size: calc(14 * var(--u));
+      font-weight: 500;
+      transition: all .18s ease;
+    }
+
+    .home-time-option.active {
+      border-color: var(--brand);
+      background: rgba(168, 255, 61, .14);
+      color: var(--brand);
+    }
+
+    .home-time-confirm {
+      width: 100%;
+      height: calc(48 * var(--u));
+      border: 0;
+      border-radius: calc(24 * var(--u));
+      background: var(--brand);
+      color: #05080d;
+      font-size: calc(15 * var(--u));
+      font-weight: 600;
+    }
+
+    /* ---------- 地图区域 ---------- */
+    .home-map-wrap {
+      position: relative;
+      margin-bottom: calc(16 * var(--u));
+    }
+
+    .home-map {
+      position: relative;
+      height: calc(300 * var(--u));
+      border-radius: calc(20 * var(--u));
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 25% 30%, rgba(168, 255, 61, .08), transparent 40%),
+        radial-gradient(circle at 75% 65%, rgba(120, 80, 220, .10), transparent 45%),
+        linear-gradient(180deg, #0d131d 0%, #070b11 100%);
+      border: 1px solid var(--border);
+      box-shadow: inset 0 0 calc(50 * var(--u)) rgba(0, 0, 0, .5);
+    }
+
+    .home-amap-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .home-map-locate {
+      position: absolute;
+      left: calc(10 * var(--u));
+      bottom: calc(10 * var(--u));
+      z-index: 6;
+      display: inline-flex;
+      align-items: center;
+      gap: calc(5 * var(--u));
+      min-height: calc(34 * var(--u));
+      padding: 0 calc(10 * var(--u));
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: calc(12 * var(--u));
+      background: rgba(8, 10, 13, .9);
+      color: #f5f5f5;
+      font-size: calc(11 * var(--u));
+      box-shadow: 0 calc(4 * var(--u)) calc(12 * var(--u)) rgba(0, 0, 0, .28);
+    }
+
+    .home-map-locate-mark {
+      color: var(--brand);
+      font-size: calc(17 * var(--u));
+      line-height: 1;
+    }
+
+    .home-map.real-map-ready .home-map-grid,
+    .home-map.real-map-ready .home-map-district,
+    .home-map.real-map-ready .home-map-pins {
+      display: none;
+    }
+
+    .home-amap-marker {
+      display: flex;
+      align-items: center;
+      gap: calc(5 * var(--u));
+      max-width: calc(150 * var(--u));
+      padding: calc(7 * var(--u)) calc(10 * var(--u));
+      border: 1px solid rgba(168, 255, 61, .58);
+      border-radius: calc(14 * var(--u));
+      background: rgba(8, 10, 13, .93);
+      box-shadow: 0 calc(5 * var(--u)) calc(16 * var(--u)) rgba(0, 0, 0, .38);
+      color: #f5f5f5;
+      font-family: inherit;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .home-amap-marker.echo {
+      background: rgba(20, 29, 16, .95);
+    }
+
+    .home-amap-marker-icon {
+      display: grid;
+      place-items: center;
+      width: calc(22 * var(--u));
+      height: calc(22 * var(--u));
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: rgba(168, 255, 61, .14);
+      color: var(--brand);
+      font-size: calc(11 * var(--u));
+      font-weight: 800;
+    }
+
+    .home-amap-marker-label {
+      overflow: hidden;
+      font-size: calc(11 * var(--u));
+      font-weight: 650;
+      text-overflow: ellipsis;
+    }
+
+    .amap-logo,
+    .amap-copyright { opacity: .62; }
+
+    .home-map-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+      background-size: calc(36 * var(--u)) calc(36 * var(--u));
+      mask-image: radial-gradient(ellipse at center, black 45%, transparent 90%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 45%, transparent 90%);
+    }
+
+    .home-map-district {
+      position: absolute;
+      font-size: calc(12 * var(--u));
+      color: rgba(157, 161, 168, .55);
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    .home-map-pin {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: calc(6 * var(--u));
+      padding: calc(7 * var(--u)) calc(11 * var(--u));
+      border-radius: calc(14 * var(--u));
+      background: rgba(9, 13, 19, .88);
+      border: 1px solid rgba(168, 255, 61, .35);
+      box-shadow: 0 calc(4 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, .35);
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      transition: all .2s ease;
+      max-width: calc(160 * var(--u));
+      z-index: 1;
+    }
+
+    .home-map-pin.active {
+      z-index: 2;
+      background: var(--brand);
+      border-color: var(--brand);
+      box-shadow: 0 0 calc(18 * var(--u)) rgba(168, 255, 61, .6);
+    }
+
+    .home-map-pin.active .home-map-pin-icon {
+      background: rgba(5, 8, 13, .2);
+      color: #05080d;
+    }
+
+    .home-map-pin.active .home-map-pin-title,
+    .home-map-pin.active .home-map-pin-time {
+      color: #05080d;
+    }
+
+    .home-map-pin::after {
+      content: '';
+      position: absolute;
+      bottom: calc(-7 * var(--u));
+      left: 50%;
+      width: calc(8 * var(--u));
+      height: calc(8 * var(--u));
+      background: rgba(9, 13, 19, .88);
+      border-right: 1px solid rgba(168, 255, 61, .35);
+      border-bottom: 1px solid rgba(168, 255, 61, .35);
+      transform: translateX(-50%) rotate(45deg);
+      transition: background .2s ease, border-color .2s ease;
+    }
+
+    .home-map-pin.active::after {
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+
+    .home-map-pin-icon {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: calc(24 * var(--u));
+      height: calc(24 * var(--u));
+      border-radius: 50%;
+      background: rgba(168, 255, 61, .16);
+      color: var(--brand);
+      transition: all .2s ease;
+    }
+
+    .home-map-pin-icon svg {
+      width: calc(14 * var(--u));
+      height: calc(14 * var(--u));
+      fill: currentColor;
+    }
+
+    .home-map-pin-text {
+      display: flex;
+      flex-direction: column;
+      gap: calc(2 * var(--u));
+      overflow: hidden;
+    }
+
+    .home-map-pin-title {
+      font-size: calc(12 * var(--u));
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color .2s ease;
+    }
+
+    .home-map-pin-time {
+      font-size: calc(10 * var(--u));
+      color: var(--text-sub);
+      transition: color .2s ease;
+    }
+
+    .home-map-pin.echo-pin {
+      border-color: rgba(168, 255, 61, .62);
+    }
+
+    .home-echo-letter {
+      font-size: calc(12 * var(--u));
+      font-weight: 850;
+      line-height: 1;
+    }
+
+    .home-map::before {
+      position: absolute;
+      right: calc(10 * var(--u));
+      bottom: calc(10 * var(--u));
+      z-index: 4;
+      padding: calc(5 * var(--u)) calc(9 * var(--u));
+      border-radius: calc(10 * var(--u));
+      background: rgba(5, 8, 13, .76);
+      color: #c5c9ce;
+      font-size: calc(10 * var(--u));
+      content: "点击展开地图";
+      pointer-events: none;
+    }
+
+    .home-map-detail {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      z-index: 80;
+      display: none;
+      flex-direction: column;
+      width: min(100vw, calc(430 * var(--u)));
+      height: 100dvh;
+      padding: env(safe-area-inset-top) calc(16 * var(--u)) calc(18 * var(--u));
+      background: #080a0d;
+      transform: translateX(-50%);
+    }
+
+    .home-map-detail.open { display: flex; }
+
+    .home-map-detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: calc(58 * var(--u));
+    }
+
+    .home-map-detail-header h2 {
+      margin: 0;
+      font-size: calc(18 * var(--u));
+    }
+
+    .home-map-detail-close {
+      display: grid;
+      place-items: center;
+      width: calc(38 * var(--u));
+      height: calc(38 * var(--u));
+      padding: 0;
+      border-radius: 50%;
+      background: #171b20;
+      color: #f5f5f5;
+      font-size: calc(22 * var(--u));
+    }
+
+    .home-map-detail .home-map {
+      height: calc(350 * var(--u));
+      flex: 0 0 auto;
+    }
+
+    .home-map-detail .home-map::before { display: none; }
+
+    .home-nearby-title {
+      margin: calc(18 * var(--u)) 0 calc(10 * var(--u));
+      color: #f5f5f5;
+      font-size: calc(16 * var(--u));
+    }
+
+    .home-nearby-list {
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .home-nearby-item {
+      display: flex;
+      align-items: center;
+      gap: calc(11 * var(--u));
+      width: 100%;
+      padding: calc(12 * var(--u)) 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      background: transparent;
+      color: #f1f1f1;
+      text-align: left;
+    }
+
+    .home-nearby-icon {
+      display: grid;
+      place-items: center;
+      width: calc(34 * var(--u));
+      height: calc(34 * var(--u));
+      flex: 0 0 auto;
+      border-radius: calc(10 * var(--u));
+      background: rgba(168, 255, 61, .12);
+      color: var(--brand);
+      font-weight: 800;
+    }
+
+    .home-nearby-copy { min-width: 0; }
+    .home-nearby-name { font-size: calc(14 * var(--u)); font-weight: 650; }
+    .home-nearby-meta { margin-top: calc(4 * var(--u)); color: #8e949b; font-size: calc(12 * var(--u)); }
+
+    /* ---------- 活动简卡 ---------- */
+    .home-brief-card {
+      display: none;
+      align-items: center;
+      gap: calc(12 * var(--u));
+      margin-top: calc(12 * var(--u));
+      padding: calc(12 * var(--u));
+      border-radius: calc(16 * var(--u));
+      background: var(--surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform .18s ease;
+    }
+
+    .home-brief-card:active {
+      transform: scale(.99);
+    }
+
+    .home-brief-card.show {
+      display: flex;
+    }
+
+    .home-brief-thumb {
+      flex-shrink: 0;
+      width: calc(72 * var(--u));
+      height: calc(72 * var(--u));
+      border-radius: calc(12 * var(--u));
+      overflow: hidden;
+      background: var(--surface-soft);
+    }
+
+    .home-brief-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .home-brief-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .home-brief-title {
+      margin: 0 0 calc(6 * var(--u));
+      font-size: calc(15 * var(--u));
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .home-brief-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(6 * var(--u));
+      margin-bottom: calc(8 * var(--u));
+      font-size: calc(12 * var(--u));
+      color: var(--text-sub);
+    }
+
+    .home-brief-tag {
+      padding: calc(3 * var(--u)) calc(8 * var(--u));
+      border-radius: calc(8 * var(--u));
+      background: rgba(168, 255, 61, .12);
+      color: var(--brand);
+      font-size: calc(11 * var(--u));
+      font-weight: 600;
+    }
+
+    .home-brief-btn {
+      flex-shrink: 0;
+      height: calc(34 * var(--u));
+      padding: 0 calc(16 * var(--u));
+      border: 0;
+      border-radius: calc(17 * var(--u));
+      background: var(--brand);
+      color: #05080d;
+      font-size: calc(13 * var(--u));
+      font-weight: 600;
+    }
+
+    /* ---------- 精选活动 ---------- */
+    .home-section-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: calc(14 * var(--u));
+    }
+
+    .home-section-title h2 {
+      margin: 0;
+      font-size: calc(18 * var(--u));
+      font-weight: 700;
+    }
+
+    .home-section-more {
+      display: inline-flex;
+      align-items: center;
+      gap: calc(4 * var(--u));
+      font-size: calc(13 * var(--u));
+      color: var(--text-sub);
+    }
+
+    .home-section-more::after {
+      content: '';
+      width: calc(6 * var(--u));
+      height: calc(6 * var(--u));
+      border-right: calc(1.5 * var(--u)) solid currentColor;
+      border-bottom: calc(1.5 * var(--u)) solid currentColor;
+      transform: rotate(-45deg);
+    }
+
+    .home-featured {
+      display: flex;
+      gap: calc(12 * var(--u));
+      overflow-x: auto;
+      padding-bottom: calc(20 * var(--u));
+      margin: 0;
+      padding-left: 0;
+      padding-right: calc(18 * var(--u));
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .home-featured::-webkit-scrollbar {
+      display: none;
+    }
+
+    .event-card {
+      flex: 0 0 auto;
+      width: calc(260 * var(--u));
+      border-radius: calc(18 * var(--u));
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      scroll-snap-align: start;
+      transition: transform .18s ease;
+      cursor: pointer;
+    }
+
+    .event-card:active {
+      transform: scale(.98);
+    }
+
+    .event-card-cover {
+      position: relative;
+      width: 100%;
+      height: calc(150 * var(--u));
+      overflow: hidden;
+    }
+
+    .event-card-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .event-card-badge {
+      position: absolute;
+      top: calc(10 * var(--u));
+      left: calc(10 * var(--u));
+      padding: calc(4 * var(--u)) calc(8 * var(--u));
+      border-radius: calc(8 * var(--u));
+      background: rgba(168, 255, 61, .18);
+      color: var(--brand);
+      font-size: calc(10 * var(--u));
+      font-weight: 600;
+      border: 1px solid rgba(168, 255, 61, .3);
+    }
+
+    .event-card-fav {
+      position: absolute;
+      top: calc(10 * var(--u));
+      right: calc(10 * var(--u));
+      display: grid;
+      place-items: center;
+      width: calc(28 * var(--u));
+      height: calc(28 * var(--u));
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(5, 8, 13, .5);
+      color: #fff;
+      backdrop-filter: blur(calc(4 * var(--u)));
+    }
+
+    .event-card-fav svg {
+      width: calc(16 * var(--u));
+      height: calc(16 * var(--u));
+      fill: currentColor;
+    }
+
+    .event-card-fav.active svg {
+      fill: var(--brand);
+    }
+
+    .event-card-body {
+      padding: calc(12 * var(--u)) calc(14 * var(--u)) calc(14 * var(--u));
+    }
+
+    .event-card-title {
+      margin: 0 0 calc(8 * var(--u));
+      font-size: calc(15 * var(--u));
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .event-card-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: calc(6 * var(--u));
+      margin-bottom: calc(8 * var(--u));
+      font-size: calc(12 * var(--u));
+      color: var(--text-sub);
+    }
+
+    .event-card-meta svg {
+      width: calc(12 * var(--u));
+      height: calc(12 * var(--u));
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    .event-card-meta .price-free {
+      color: var(--brand);
+      font-weight: 600;
+    }
+
+    .event-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(6 * var(--u));
+    }
+
+    .event-card-tag-item {
+      padding: calc(4 * var(--u)) calc(8 * var(--u));
+      border-radius: calc(8 * var(--u));
+      background: var(--surface-soft);
+      color: var(--text-sub);
+      font-size: calc(11 * var(--u));
+    }
+
+    /* ---------- 空状态 ---------- */
+    .home-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: calc(32 * var(--u)) calc(18 * var(--u));
+      color: var(--text-sub);
+      text-align: center;
+    }
+
+    .home-empty-icon {
+      width: calc(48 * var(--u));
+      height: calc(48 * var(--u));
+      margin-bottom: calc(12 * var(--u));
+      color: var(--brand);
+      opacity: .6;
+    }
+
+    .home-empty-icon svg {
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
+    }
+
+    .home-empty-title {
+      margin: 0 0 calc(6 * var(--u));
+      font-size: calc(15 * var(--u));
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .home-empty-desc {
+      margin: 0;
+      font-size: calc(13 * var(--u));
+    }
+
+    /* ---------- 地图主视图 + 可拖拽活动抽屉 ---------- */
+    .home-page {
+      position: relative;
+      height: calc(100dvh - calc(72 * var(--u)) - env(safe-area-inset-bottom));
+      min-height: calc(560 * var(--u));
+      padding: 0;
+      overflow: hidden;
+      background: #080b10;
+    }
+
+    .home-page::before,
+    .home-page::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .home-page::before {
+      top: 0;
+      height: calc(112 * var(--u) + env(safe-area-inset-top));
+      background: #000;
+    }
+
+    .home-page::after {
+      top: calc(106 * var(--u) + env(safe-area-inset-top));
+      height: calc(96 * var(--u));
+      background: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .84) 42%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    .home-topbar {
+      position: absolute;
+      top: calc(16 * var(--u) + env(safe-area-inset-top));
+      left: calc(16 * var(--u));
+      right: calc(16 * var(--u));
+      z-index: 12;
+      margin: 0;
+    }
+
+    .home-logo { width: calc(138 * var(--u)); }
+
+    .home-location {
+      min-height: calc(34 * var(--u));
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .home-search {
+      position: absolute;
+      top: calc(62 * var(--u) + env(safe-area-inset-top));
+      left: calc(16 * var(--u));
+      right: calc(16 * var(--u));
+      z-index: 12;
+      margin: 0;
+    }
+
+    .home-search-input {
+      height: calc(42 * var(--u));
+      border-color: rgba(255, 255, 255, .13);
+      background: #0a0a0a;
+      box-shadow: 0 calc(6 * var(--u)) calc(20 * var(--u)) rgba(0, 0, 0, .22);
+      backdrop-filter: blur(calc(14 * var(--u)));
+    }
+
+    .home-categories {
+      position: absolute;
+      top: calc(114 * var(--u) + env(safe-area-inset-top));
+      left: calc(16 * var(--u));
+      right: 0;
+      z-index: 12;
+      margin: 0;
+      padding: 0 calc(16 * var(--u)) calc(4 * var(--u)) 0;
+    }
+
+    .home-category,
+    .home-filter-btn {
+      border-color: rgba(255, 255, 255, .13);
+      background: rgba(8, 8, 8, .9);
+      box-shadow: 0 calc(4 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, .2);
+      backdrop-filter: blur(calc(12 * var(--u)));
+    }
+
+    .home-map-wrap {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+    }
+
+    .home-map {
+      height: 100%;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .home-map::before { display: none; }
+
+    .home-map-locate {
+      left: auto;
+      right: calc(16 * var(--u));
+      bottom: calc(17% + calc(14 * var(--u)));
+      display: grid;
+      place-items: center;
+      width: calc(44 * var(--u));
+      height: calc(44 * var(--u));
+      min-height: 0;
+      padding: 0;
+      border-radius: 50%;
+      background: rgba(7, 10, 15, .94);
+      color: var(--brand);
+      box-shadow: 0 calc(7 * var(--u)) calc(22 * var(--u)) rgba(0, 0, 0, .35);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .home-map-locate svg {
+      width: calc(24 * var(--u));
+      height: calc(24 * var(--u));
+      fill: currentColor;
+    }
+
+    .home-map-locate:active { transform: scale(.92); }
+
+    .home-page.sheet-expanded .home-map-locate {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .home-discovery-sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 18;
+      height: 17%;
+      min-height: calc(100 * var(--u));
+      padding: calc(6 * var(--u)) 0 0;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, .11);
+      border-bottom: 0;
+      border-radius: calc(25 * var(--u)) calc(25 * var(--u)) 0 0;
+      background: rgba(8, 11, 16, .97);
+      box-shadow: 0 calc(-10 * var(--u)) calc(34 * var(--u)) rgba(0, 0, 0, .32);
+      backdrop-filter: blur(calc(20 * var(--u)));
+      transition: height .3s cubic-bezier(.2, .78, .2, 1);
+      will-change: height;
+    }
+
+    .home-discovery-sheet.is-dragging { transition: none; }
+    .home-discovery-sheet.is-expanded { height: 82%; }
+
+    .home-sheet-grabber {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: calc(26 * var(--u));
+      padding: 0;
+      background: transparent;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .home-sheet-grabber span {
+      width: calc(42 * var(--u));
+      height: calc(5 * var(--u));
+      border-radius: calc(3 * var(--u));
+      background: rgba(255, 255, 255, .32);
+    }
+
+    .home-sheet-grabber:active { cursor: grabbing; }
+
+    .home-discovery-sheet .home-section-title {
+      padding: 0 calc(18 * var(--u));
+      margin: calc(2 * var(--u)) 0 calc(4 * var(--u));
+    }
+
+    .home-discovery-sheet .home-section-title h2 {
+      font-size: calc(20 * var(--u));
+      letter-spacing: -.02em;
+    }
+
+    .home-discovery-sheet .home-section-more {
+      min-height: calc(24 * var(--u));
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: #858b93;
+      font-size: calc(11 * var(--u));
+      font-weight: 500;
+    }
+
+    .home-discovery-sheet .home-section-more::after {
+      display: block;
+      border-color: currentColor;
+    }
+
+    .home-featured {
+      height: calc(100% - calc(58 * var(--u)));
+      margin: 0;
+      padding: 0 calc(18 * var(--u));
+      gap: calc(10 * var(--u));
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .home-discovery-sheet:not(.is-expanded) .event-card {
+      width: calc(218 * var(--u));
+      border-radius: calc(16 * var(--u));
+    }
+
+    .home-discovery-sheet:not(.is-expanded) .event-card-cover {
+      height: calc(86 * var(--u));
+    }
+
+    .home-discovery-sheet:not(.is-expanded) .event-card-body {
+      padding: calc(8 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u));
+    }
+
+    .home-discovery-sheet:not(.is-expanded) .event-card-title {
+      display: -webkit-box;
+      margin-bottom: calc(5 * var(--u));
+      overflow: hidden;
+      font-size: calc(13 * var(--u));
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+    }
+
+    .home-discovery-sheet:not(.is-expanded) .event-card-meta {
+      gap: calc(4 * var(--u));
+      margin: 0;
+      font-size: calc(10 * var(--u));
+    }
+
+    .home-discovery-sheet:not(.is-expanded) .event-card-tags { display: none; }
+
+    .home-discovery-sheet.is-expanded .home-featured {
+      flex-direction: column;
+      height: calc(100% - calc(66 * var(--u)));
+      gap: calc(12 * var(--u));
+      padding-bottom: calc(16 * var(--u));
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-snap-type: none;
+    }
+
+    .home-discovery-sheet.is-expanded .home-section-title {
+      margin-bottom: calc(12 * var(--u));
+    }
+
+    .home-discovery-sheet.is-expanded .event-card {
+      display: grid;
+      grid-template-columns: calc(112 * var(--u)) minmax(0, 1fr);
+      width: 100%;
+      min-height: calc(126 * var(--u));
+      flex: 0 0 auto;
+      border-radius: calc(16 * var(--u));
+      scroll-snap-align: none;
+    }
+
+    .home-discovery-sheet.is-expanded .event-card-cover {
+      width: 100%;
+      height: 100%;
+      min-height: calc(126 * var(--u));
+    }
+
+    .home-discovery-sheet.is-expanded .event-card-body {
+      align-self: center;
+      padding: calc(12 * var(--u));
+    }
+
+    .home-discovery-sheet.is-expanded .event-card-title {
+      font-size: calc(14 * var(--u));
+      line-height: 1.35;
+    }
+
+    .home-discovery-sheet.is-expanded .event-card-meta {
+      font-size: calc(11 * var(--u));
+      line-height: 1.45;
+    }
   </style>
 
   <header class="home-topbar">
@@ -64,4 +1162,609 @@
       <span class="home-location-arrow" aria-hidden="true"></span>
     </button>
   </header>
+
+  <div class="home-search">
+    <span class="home-search-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.07 7.07c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14Zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14Z"/></svg>
+    </span>
+    <input class="home-search-input" type="search" placeholder="搜索活动 / 地点" aria-label="搜索活动或地点">
+    <div class="home-search-actions">
+      <button class="home-search-action" type="button" aria-label="扫一扫">
+        <svg viewBox="0 0 24 24"><path d="M3 3h6v2H5v4H3V3Zm18 0v6h-2V5h-4V3h6ZM3 21v-6h2v4h4v2H3Zm18 0h-6v-2h4v-4h2v6ZM7 7h2v2H7V7Zm4 0h2v2h-2V7Zm4 0h2v2h-2V7ZM7 11h2v2H7v-2Zm4 0h2v2h-2v-2Zm4 0h2v2h-2v-2ZM7 15h2v2H7v-2Zm4 0h2v2h-2v-2Zm4 0h2v2h-2v-2Z"/></svg>
+      </button>
+      <button class="home-search-action" type="button" aria-label="筛选">
+        <svg viewBox="0 0 24 24"><path d="M3 5h18v2H3V5Zm2 4h14v2H5V9Zm4 4h6v2H9v-2Zm-2 4h10v2H7v-2Z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="home-categories" role="tablist" aria-label="活动分类">
+    <button class="home-category active" type="button" data-category="全部" role="tab" aria-selected="true">
+      <svg viewBox="0 0 24 24"><path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"/></svg>
+      <span>全部</span>
+    </button>
+    <button class="home-category" type="button" data-category="音乐" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6Z"/></svg>
+      <span>音乐</span>
+    </button>
+    <button class="home-category" type="button" data-category="展览" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2Zm0 16H3V5h18v14ZM5 7h14v2H5V7Zm0 4h8v2H5v-2Z"/></svg>
+      <span>展览</span>
+    </button>
+    <button class="home-category" type="button" data-category="放映" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4V6Zm0 5h10v2H4v-2Zm0 5h16v2H4v-2Zm14-7 4 3-4 3V9Z"/></svg>
+      <span>放映</span>
+    </button>
+    <button class="home-category" type="button" data-category="市集" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2Zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3Zm7 17H5V8h14v12Zm-7-8c-1.66 0-3-1.34-3-3h2c0 .55.45 1 1 1s1-.45 1-1h2c0 1.66-1.34 3-3 3Z"/></svg>
+      <span>市集</span>
+    </button>
+    <button class="home-category" type="button" data-category="夜游" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1Zm0 16a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg>
+      <span>夜游</span>
+    </button>
+    <button class="home-filter-btn" type="button" aria-label="展开筛选" id="filterExpandBtn">
+      <svg viewBox="0 0 24 24"><path d="M3 5h18v2H3V5Zm2 4h14v2H5V9Zm4 4h6v2H9v-2Zm-2 4h10v2H7v-2Z"/></svg>
+    </button>
+  </div>
+
+  <div class="home-map-wrap">
+    <div class="home-map" aria-label="活动地图">
+      <div class="home-amap-canvas" id="homeAmapCompact"></div>
+      <div class="home-map-grid" aria-hidden="true"></div>
+      <div class="home-map-district" style="top: 12%; left: 42%;">鼓楼区</div>
+      <div class="home-map-district" style="top: 22%; right: 18%;">玄武湖</div>
+      <div class="home-map-district" style="top: 42%; left: 50%;">秦淮区</div>
+      <div class="home-map-district" style="top: 58%; left: 10%;">建邺区</div>
+      <div class="home-map-district" style="top: 76%; left: 32%;">雨花台区</div>
+      <div class="home-map-pins"></div>
+      <button class="home-map-locate" type="button" data-map-locate="compact" aria-label="回到当前位置">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 2h2v2.07A8.003 8.003 0 0 1 19.93 11H22v2h-2.07A8.003 8.003 0 0 1 13 19.93V22h-2v-2.07A8.003 8.003 0 0 1 4.07 13H2v-2h2.07A8.003 8.003 0 0 1 11 4.07V2Zm1 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12Zm0 3.25a2.75 2.75 0 1 1 0 5.5 2.75 2.75 0 0 1 0-5.5Z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <section class="home-discovery-sheet" id="homeDiscoverySheet" aria-label="附近活动" data-state="peek">
+    <button class="home-sheet-grabber" id="homeSheetGrabber" type="button" aria-label="展开全部活动" aria-expanded="false">
+      <span aria-hidden="true"></span>
+    </button>
+    <div class="home-section-title">
+      <h2>附近活动</h2>
+      <button class="home-section-more" id="homeSheetHint" type="button">查看全部活动</button>
+    </div>
+    <div class="home-featured" id="homeFeatured"></div>
+  </section>
+
+  <div class="home-time-sheet" id="timeSheet" aria-hidden="true">
+    <div class="home-time-sheet-body">
+      <h3 class="home-time-sheet-title">选择时间</h3>
+      <div class="home-time-options" role="tablist" aria-label="时间选项">
+        <button class="home-time-option active" type="button" data-time="all" role="tab" aria-selected="true">全部</button>
+        <button class="home-time-option" type="button" data-time="tonight" role="tab" aria-selected="false">今晚</button>
+        <button class="home-time-option" type="button" data-time="tomorrow" role="tab" aria-selected="false">明天</button>
+        <button class="home-time-option" type="button" data-time="weekend" role="tab" aria-selected="false">周末</button>
+        <button class="home-time-option" type="button" data-time="thisWeek" role="tab" aria-selected="false">本周</button>
+        <button class="home-time-option" type="button" data-time="custom" role="tab" aria-selected="false">自定义</button>
+      </div>
+      <button class="home-time-confirm" type="button" id="timeConfirmBtn">确定</button>
+    </div>
+  </div>
 </section>
+
+<script>
+  (function () {
+    'use strict';
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const allEvents = (typeof window !== 'undefined' && window.MOCK_EVENTS) ? window.MOCK_EVENTS : [];
+      let currentCategory = '全部';
+      let currentTimeGroup = 'all';
+      let pendingTimeGroup = 'all';
+      let selectedEventId = null;
+      let compactAmap = null;
+      let detailAmap = null;
+      let detailAmapMarkers = [];
+      let realMapActive = false;
+      let suppressMapDetailOpen = false;
+      let selfPosition = { longitude: 118.9597, latitude: 32.1194 };
+      const echoPoints = ((typeof window !== 'undefined' && window.MOCK_ECHO_POINTS) ? window.MOCK_ECHO_POINTS : []).map(point => ({
+        ...point,
+        meta: `${point.distance || ''}${point.address ? ` · ${point.address}` : ''}`
+      }));
+
+      const categoryIcons = {
+        '音乐': '<svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6Z"/></svg>',
+        '展览': '<svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2Zm0 16H3V5h18v14ZM5 7h14v2H5V7Zm0 4h8v2H5v-2Z"/></svg>',
+        '放映': '<svg viewBox="0 0 24 24"><path d="M4 6h16v2H4V6Zm0 5h10v2H4v-2Zm0 5h16v2H4v-2Zm14-7 4 3-4 3V9Z"/></svg>',
+        '市集': '<svg viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2Zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3Zm7 17H5V8h14v12Zm-7-8c-1.66 0-3-1.34-3-3h2c0 .55.45 1 1 1s1-.45 1-1h2c0 1.66-1.34 3-3 3Z"/></svg>',
+        '夜游': '<svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1Zm0 16a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg>'
+      };
+
+      // 分类切换
+      document.querySelectorAll('.home-category').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cat = btn.dataset.category;
+          if (!cat) return;
+          currentCategory = cat;
+          document.querySelectorAll('.home-category').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+          hideBriefCard();
+          updateView();
+        });
+      });
+
+      // 展开时间筛选浮层
+      const filterExpandBtn = document.getElementById('filterExpandBtn');
+      const timeSheet = document.getElementById('timeSheet');
+      const timeConfirmBtn = document.getElementById('timeConfirmBtn');
+
+      if (filterExpandBtn && timeSheet) {
+        filterExpandBtn.addEventListener('click', () => {
+          pendingTimeGroup = currentTimeGroup;
+          document.querySelectorAll('.home-time-option').forEach(b => {
+            b.classList.toggle('active', b.dataset.time === pendingTimeGroup);
+            b.setAttribute('aria-selected', b.dataset.time === pendingTimeGroup ? 'true' : 'false');
+          });
+          timeSheet.classList.add('open');
+          timeSheet.setAttribute('aria-hidden', 'false');
+        });
+
+        timeSheet.addEventListener('click', e => {
+          if (e.target === timeSheet) {
+            timeSheet.classList.remove('open');
+            timeSheet.setAttribute('aria-hidden', 'true');
+          }
+        });
+      }
+
+      // 时间选项切换
+      document.querySelectorAll('.home-time-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const time = btn.dataset.time;
+          if (time === 'custom') {
+            alert('自定义日期选择器即将上线');
+            return;
+          }
+          pendingTimeGroup = time;
+          document.querySelectorAll('.home-time-option').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+        });
+      });
+
+      // 确定时间筛选
+      if (timeConfirmBtn) {
+        timeConfirmBtn.addEventListener('click', () => {
+          currentTimeGroup = pendingTimeGroup;
+          timeSheet.classList.remove('open');
+          timeSheet.setAttribute('aria-hidden', 'true');
+          hideBriefCard();
+          updateView();
+        });
+      }
+
+      function getFilteredEvents() {
+        return allEvents.filter(evt => {
+          const matchCategory = currentCategory === '全部' || evt.category === currentCategory;
+          const matchTime = currentTimeGroup === 'all' || evt.timeGroup === currentTimeGroup;
+          return matchCategory && matchTime;
+        });
+      }
+
+      function findEvent(id) {
+        return allEvents.find(evt => evt.id === id);
+      }
+
+      function formatPinTime(startTime) {
+        const d = new Date(startTime.replace(' ', 'T'));
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mm = String(d.getMinutes()).padStart(2, '0');
+        return `${hh}:${mm} 开始`;
+      }
+
+      function formatCardTime(startTime, explicitTime) {
+        if (explicitTime) return explicitTime;
+        const start = new Date(startTime.replace(' ', 'T'));
+        const weekday = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][start.getDay()];
+        return `${weekday} ${String(start.getHours()).padStart(2, '0')}:${String(start.getMinutes()).padStart(2, '0')}`;
+      }
+
+      function goToDetail(id) {
+        window.CURRENT_EVENT_ID = id;
+        window.CURRENT_ECHO_ID = '';
+        window.DETAIL_RETURN_TAB = 'tab-home';
+        if (typeof window.switchTab === 'function') {
+          window.switchTab('tab-event-detail');
+        }
+        if (typeof window.renderEventDetail === 'function') {
+          window.renderEventDetail();
+        }
+      }
+
+      function goToEchoDetail(id) {
+        window.CURRENT_ECHO_ID = id;
+        window.CURRENT_EVENT_ID = '';
+        window.DETAIL_RETURN_TAB = 'tab-home';
+        if (typeof window.switchTab === 'function') window.switchTab('tab-event-detail');
+        if (typeof window.renderEventDetail === 'function') window.renderEventDetail();
+      }
+
+      function setDiscoveryState(state) {
+        const sheet = document.getElementById('homeDiscoverySheet');
+        const grabber = document.getElementById('homeSheetGrabber');
+        const hint = document.getElementById('homeSheetHint');
+        const page = document.querySelector('.home-page');
+        if (!sheet) return;
+        const expanded = state === 'expanded';
+        sheet.classList.toggle('is-expanded', expanded);
+        sheet.dataset.state = expanded ? 'expanded' : 'peek';
+        sheet.style.height = '';
+        if (page) page.classList.toggle('sheet-expanded', expanded);
+        if (grabber) {
+          grabber.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+          grabber.setAttribute('aria-label', expanded ? '收起活动列表' : '展开全部活动');
+        }
+        if (hint) hint.textContent = '查看全部活动';
+      }
+
+      function openMapDetail() {
+        setDiscoveryState('expanded');
+      }
+
+      function closeMapDetail() {
+        setDiscoveryState('peek');
+      }
+
+      function renderNearbyList() {
+        const list = document.getElementById('homeNearbyList');
+        if (!list) return;
+        list.innerHTML = [
+          ...allEvents.map(evt => `<button class="home-nearby-item" type="button" data-nearby-event="${evt.id}"><span class="home-nearby-icon">票</span><span class="home-nearby-copy"><span class="home-nearby-name">${evt.title}</span><span class="home-nearby-meta">${evt.cardTime || formatPinTime(evt.startTime)} · ${evt.address}</span></span></button>`),
+          ...echoPoints.map(point => `<button class="home-nearby-item" type="button" data-nearby-echo="${point.id}"><span class="home-nearby-icon">e</span><span class="home-nearby-copy"><span class="home-nearby-name">${point.title}</span><span class="home-nearby-meta">echo 点 · ${point.meta}</span></span></button>`)
+        ].join('');
+        list.querySelectorAll('[data-nearby-event]').forEach(button => button.addEventListener('click', () => {
+          closeMapDetail();
+          goToDetail(button.dataset.nearbyEvent);
+        }));
+        list.querySelectorAll('[data-nearby-echo]').forEach(button => button.addEventListener('click', () => {
+          closeMapDetail();
+          if (typeof window.switchTab === 'function') window.switchTab('tab-community');
+        }));
+      }
+
+      function getMapItems() {
+        return [
+          ...allEvents.map(event => ({ ...event, kind: 'event' })),
+          ...echoPoints.map(point => ({ ...point, kind: 'echo' }))
+        ];
+      }
+
+      function addRealMapMarkers(map, items) {
+        return items.map(item => {
+          const isEcho = item.kind === 'echo';
+          const markerContent = document.createElement('div');
+          markerContent.className = `home-amap-marker${isEcho ? ' echo' : ''}`;
+          markerContent.innerHTML = `<span class="home-amap-marker-icon">${isEcho ? 'e' : '票'}</span><span class="home-amap-marker-label">${item.title}</span>`;
+          markerContent.addEventListener('click', event => event.stopPropagation());
+          const marker = new AMap.Marker({
+            map,
+            position: new AMap.LngLat(item.longitude, item.latitude),
+            zIndex: isEcho ? 110 : 120,
+            extData: item,
+            offset: new AMap.Pixel(-22, -42),
+            title: item.title,
+            bubble: false,
+            content: markerContent
+          });
+          AMap.event.addListener(marker, 'click', event => {
+            const data = event.target.getExtData();
+            if (data.kind === 'event') {
+              suppressMapDetailOpen = true;
+              closeMapDetail();
+              goToDetail(data.id);
+              setTimeout(() => {
+                closeMapDetail();
+                suppressMapDetailOpen = false;
+              }, 80);
+            } else {
+              goToEchoDetail(data.id);
+            }
+          });
+          return marker;
+        });
+      }
+
+      function resolveRealMapPositions(items, compactMarkers, detailMarkers) {
+        if (!window.AMap || typeof AMap.service !== 'function') return;
+        AMap.service('AMap.Geocoder', () => {
+          const geocoder = new AMap.Geocoder({ city: '南京' });
+          const geocode = (address, callback) => {
+            geocoder.getLocation(address, (status, result) => {
+              const location = status === 'complete' && result.geocodes && result.geocodes[0] && result.geocodes[0].location;
+              callback(location || null);
+            });
+          };
+          const updateMarker = (index, location) => {
+            if (!location) return;
+            items[index].longitude = Number(location.lng);
+            items[index].latitude = Number(location.lat);
+            if (compactMarkers[index]) compactMarkers[index].setPosition(location);
+            if (detailMarkers[index]) detailMarkers[index].setPosition(location);
+            compactAmap.setFitView(compactMarkers);
+            if (detailAmap && detailMarkers.length) detailAmap.setFitView(detailMarkers);
+          };
+
+          items.forEach((item, index) => {
+            if (item.geocodeAddress) geocode(item.geocodeAddress, location => updateMarker(index, location));
+            if (item.geocodeBetween) {
+              geocode(item.geocodeBetween[0], first => {
+                geocode(item.geocodeBetween[1], second => {
+                  if (!first || !second) return;
+                  updateMarker(index, new AMap.LngLat((Number(first.lng) + Number(second.lng)) / 2, (Number(first.lat) + Number(second.lat)) / 2));
+                });
+              });
+            }
+          });
+          geocode('南京大学仙林校区', location => {
+            if (location) selfPosition = { longitude: Number(location.lng), latitude: Number(location.lat) };
+          });
+        });
+      }
+
+      function initRealMaps() {
+        if (!window.AMap) return;
+        try {
+          const options = {
+            center: new AMap.LngLat(118.84, 32.065),
+            level: 11,
+            keyboardEnable: true,
+            dragEnable: true,
+            scrollWheel: true,
+            doubleClickZoom: true,
+            mapStyle: 'amap://styles/dark'
+          };
+          compactAmap = new AMap.Map('homeAmapCompact', options);
+          const items = getMapItems();
+          const compactMarkers = addRealMapMarkers(compactAmap, items);
+          if (compactMarkers.length) compactAmap.setFitView(compactMarkers);
+          resolveRealMapPositions(items, compactMarkers, detailAmapMarkers);
+          document.querySelectorAll('.home-map').forEach(mapEl => mapEl.classList.add('real-map-ready'));
+          realMapActive = true;
+        } catch (error) {
+          realMapActive = false;
+          console.warn('高德地图加载失败，已使用静态地图兜底。', error);
+        }
+      }
+
+      function renderMapPins() {
+        if (realMapActive) return;
+        const containers = document.querySelectorAll('.home-map-pins');
+        if (!containers.length) return;
+        const mapItems = getMapItems();
+        const lats = mapItems.map(item => item.latitude);
+        const lngs = mapItems.map(item => item.longitude);
+        const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+        const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+        const padLat = (maxLat - minLat) * 0.2 || 0.01;
+        const padLng = (maxLng - minLng) * 0.2 || 0.01;
+
+        containers.forEach(container => {
+          container.innerHTML = '';
+          mapItems.forEach(item => {
+            const top = 12 + 76 * (1 - (item.latitude - minLat + padLat) / (maxLat - minLat + padLat * 2));
+            const left = 12 + 76 * (item.longitude - minLng + padLng) / (maxLng - minLng + padLng * 2);
+            const isEcho = item.kind === 'echo';
+            const icon = isEcho ? '<span class="home-echo-letter">e</span>' : (categoryIcons[item.category] || categoryIcons['音乐']);
+            const pin = document.createElement('button');
+            pin.type = 'button';
+            pin.className = `home-map-pin${isEcho ? ' echo-pin' : ''}`;
+            pin.dataset.id = item.id;
+            pin.style.top = top + '%';
+            pin.style.left = left + '%';
+            pin.innerHTML = `<span class="home-map-pin-icon" aria-hidden="true">${icon}</span><span class="home-map-pin-text"><span class="home-map-pin-title">${item.title}</span><span class="home-map-pin-time">${isEcho ? item.meta : (item.cardTime || formatPinTime(item.startTime))}</span></span>`;
+            pin.addEventListener('click', event => {
+              event.stopPropagation();
+              if (isEcho) goToEchoDetail(item.id);
+              else {
+                closeMapDetail();
+                goToDetail(item.id);
+              }
+            });
+            container.appendChild(pin);
+          });
+        });
+        renderNearbyList();
+      }
+
+      document.querySelectorAll('[data-map-locate]').forEach(button => button.addEventListener('click', event => {
+        event.stopPropagation();
+        const targetMap = compactAmap;
+        if (targetMap && window.AMap) targetMap.setZoomAndCenter(16, new AMap.LngLat(selfPosition.longitude, selfPosition.latitude));
+      }));
+
+      const discoverySheet = document.getElementById('homeDiscoverySheet');
+      const sheetGrabber = document.getElementById('homeSheetGrabber');
+      if (discoverySheet && sheetGrabber) {
+        let dragStartY = 0;
+        let dragStartHeight = 0;
+        let dragMoved = false;
+
+        sheetGrabber.addEventListener('pointerdown', event => {
+          dragStartY = event.clientY;
+          dragStartHeight = discoverySheet.getBoundingClientRect().height;
+          dragMoved = false;
+          discoverySheet.classList.add('is-dragging');
+          if (sheetGrabber.setPointerCapture) sheetGrabber.setPointerCapture(event.pointerId);
+        });
+
+        sheetGrabber.addEventListener('pointermove', event => {
+          if (!discoverySheet.classList.contains('is-dragging')) return;
+          const delta = event.clientY - dragStartY;
+          if (Math.abs(delta) > 5) dragMoved = true;
+          const pageHeight = document.querySelector('.home-page').getBoundingClientRect().height;
+          const minHeight = pageHeight * .17;
+          const maxHeight = pageHeight * .82;
+          const nextHeight = Math.max(minHeight, Math.min(maxHeight, dragStartHeight - delta));
+          discoverySheet.style.height = `${nextHeight}px`;
+          event.preventDefault();
+        });
+
+        const finishSheetDrag = (toggleWhenStill) => {
+          if (!discoverySheet.classList.contains('is-dragging')) return;
+          discoverySheet.classList.remove('is-dragging');
+          if (dragMoved) {
+            const pageHeight = document.querySelector('.home-page').getBoundingClientRect().height;
+            const expanded = discoverySheet.getBoundingClientRect().height > pageHeight * .5;
+            setDiscoveryState(expanded ? 'expanded' : 'peek');
+          } else if (toggleWhenStill) {
+            setDiscoveryState(discoverySheet.classList.contains('is-expanded') ? 'peek' : 'expanded');
+          }
+        };
+
+        sheetGrabber.addEventListener('pointerup', () => finishSheetDrag(true));
+        sheetGrabber.addEventListener('pointercancel', () => finishSheetDrag(false));
+        sheetGrabber.addEventListener('click', event => {
+          if (event.detail === 0) {
+            setDiscoveryState(discoverySheet.classList.contains('is-expanded') ? 'peek' : 'expanded');
+          }
+        });
+        const sheetHint = document.getElementById('homeSheetHint');
+        if (sheetHint) sheetHint.addEventListener('click', () => setDiscoveryState('expanded'));
+      }
+
+      // 活动简卡
+      const briefCard = document.getElementById('homeBriefCard');
+      const briefThumb = document.getElementById('briefThumb');
+      const briefTitle = document.getElementById('briefTitle');
+      const briefTime = document.getElementById('briefTime');
+      const briefLocation = document.getElementById('briefLocation');
+      const briefPrice = document.getElementById('briefPrice');
+      const briefTag = document.getElementById('briefTag');
+      const briefDetailBtn = document.getElementById('briefDetailBtn');
+
+      function hideBriefCard() {
+        if (briefCard) briefCard.classList.remove('show');
+        selectedEventId = null;
+        document.querySelectorAll('.home-map-pin').forEach(p => p.classList.remove('active'));
+      }
+
+      function selectEvent(id) {
+        const evt = findEvent(id);
+        if (!evt) return;
+
+        selectedEventId = id;
+
+        document.querySelectorAll('.home-map-pin').forEach(p => {
+          p.classList.toggle('active', p.dataset.id === id);
+        });
+
+        if (briefCard) {
+          briefCard.dataset.id = id;
+          briefThumb.src = evt.cover;
+          briefThumb.alt = evt.title;
+          briefTitle.textContent = evt.title;
+          briefTime.textContent = formatCardTime(evt.startTime, evt.cardTime);
+          briefLocation.textContent = evt.district;
+          briefPrice.textContent = typeof evt.price === 'number' ? '¥' + evt.price : evt.price;
+          briefTag.textContent = evt.category;
+          briefCard.classList.add('show');
+        }
+      }
+
+      if (briefCard) {
+        briefCard.addEventListener('click', e => {
+          if (e.target.closest('.home-brief-btn')) return;
+          if (selectedEventId) goToDetail(selectedEventId);
+        });
+      }
+
+      if (briefDetailBtn) {
+        briefDetailBtn.addEventListener('click', () => {
+          if (selectedEventId) goToDetail(selectedEventId);
+        });
+      }
+
+      function isStartingSoon(startTime) {
+        const now = new Date('2026-06-21T18:00:00');
+        const start = new Date(startTime.replace(' ', 'T'));
+        const diffHours = (start - now) / (1000 * 60 * 60);
+        return diffHours >= 0 && diffHours <= 6;
+      }
+
+      function renderFeaturedCards(events) {
+        const container = document.getElementById('homeFeatured');
+        if (!container) return;
+
+        if (!events.length) {
+          container.innerHTML = `
+            <div class="home-empty">
+              <span class="home-empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8Zm-1-13h2v6h-2Zm0 8h2v2h-2Z"/></svg>
+              </span>
+              <p class="home-empty-title">暂无符合条件的活动</p>
+              <p class="home-empty-desc">换个分类或时间，继续探索城市</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = events.map(evt => {
+          const soonBadge = isStartingSoon(evt.startTime) ? '<span class="event-card-badge">即将开始</span>' : '';
+          const tagsHtml = (evt.tags || []).slice(0, 3).map(t => `<span class="event-card-tag-item">${t}</span>`).join('');
+          const priceClass = evt.price === '免费' ? 'price-free' : '';
+          const priceText = typeof evt.price === 'number' ? '¥' + evt.price : evt.price;
+
+          return `
+            <article class="event-card" data-id="${evt.id}">
+              <div class="event-card-cover">
+                <img src="${evt.cover}" alt="${evt.title}">
+                ${soonBadge}
+                <button class="event-card-fav" type="button" aria-label="收藏" data-id="${evt.id}">
+                  <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
+                </button>
+              </div>
+              <div class="event-card-body">
+                <h3 class="event-card-title">${evt.title}</h3>
+                <div class="event-card-meta">
+                  <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2Zm0 16H5V9h14v11Z"/></svg>
+                  <span>${formatCardTime(evt.startTime, evt.cardTime)}</span>
+                  <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z"/></svg>
+                  <span>${evt.district}</span>
+                  <span class="${priceClass}">${priceText}</span>
+                </div>
+                <div class="event-card-tags">${tagsHtml}</div>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        container.querySelectorAll('.event-card-fav').forEach(btn => {
+          btn.addEventListener('click', e => {
+            e.stopPropagation();
+            btn.classList.toggle('active');
+          });
+        });
+
+        container.querySelectorAll('.event-card').forEach(card => {
+          card.addEventListener('click', () => goToDetail(card.dataset.id));
+        });
+      }
+
+      function updateView() {
+        const filtered = getFilteredEvents();
+        renderMapPins();
+        renderFeaturedCards(allEvents);
+      }
+
+      updateView();
+      initRealMaps();
+    });
+  })();
+</script>

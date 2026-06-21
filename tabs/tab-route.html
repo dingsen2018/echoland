@@ -1,1 +1,2084 @@
 
+<!-- AI 路线 Tab -->
+<style>
+  :root {
+    --purple: #a8ff3d;
+    --purple-soft: rgba(168, 255, 61, .12);
+    --purple-deep: #17210f;
+    --green: #a8ff3d;
+    --green-soft: rgba(168, 255, 61, .12);
+    --red: #ef4444;
+    --red-soft: rgba(239, 68, 68, .15);
+    --orange: #f59e0b;
+    --orange-soft: rgba(245, 158, 11, .15);
+    --route-brand: #a8ff3d;
+    --route-brand-soft: rgba(168, 255, 61, .12);
+    --route-brand-deep: #17210f;
+  }
+
+  .route-page {
+    padding: calc(20 * var(--u)) calc(16 * var(--u)) calc(110 * var(--u));
+    max-width: 100%;
+  }
+  .route-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: calc(16 * var(--u));
+  }
+  .route-header h2 {
+    margin: 0;
+    font-size: calc(22 * var(--u));
+    font-weight: 700;
+  }
+  .route-branding {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(3 * var(--u));
+  }
+  .route-logo {
+    display: block;
+    width: calc(132 * var(--u));
+    height: auto;
+  }
+  .route-branding h2 {
+    color: var(--text-main);
+    font-size: calc(15 * var(--u));
+    font-weight: 650;
+  }
+  .route-city {
+    display: flex;
+    align-items: center;
+    gap: calc(4 * var(--u));
+    color: var(--text-main);
+    font-size: calc(14 * var(--u));
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .route-city .home-location-pin { color: var(--route-brand); }
+  .route-mode-tip {
+    font-size: calc(13 * var(--u));
+    color: var(--route-brand);
+    margin-bottom: calc(12 * var(--u));
+    display: flex;
+    align-items: center;
+    gap: calc(4 * var(--u));
+  }
+  .route-nl-input-wrap {
+    position: relative;
+    margin-bottom: calc(10 * var(--u));
+  }
+  .route-nl-input-wrap input {
+    width: 100%;
+    padding: calc(14 * var(--u)) calc(16 * var(--u)) calc(14 * var(--u)) calc(40 * var(--u));
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(16 * var(--u));
+    color: var(--text-main);
+    font-size: calc(14 * var(--u));
+    outline: none;
+    transition: border-color .18s;
+  }
+  .route-nl-input-wrap input:focus {
+    border-color: var(--route-brand);
+  }
+  .route-nl-input-wrap input::placeholder {
+    color: var(--text-sub);
+    opacity: .7;
+  }
+  .route-nl-input-wrap .nl-icon {
+    position: absolute;
+    left: calc(14 * var(--u));
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--route-brand);
+    font-size: calc(16 * var(--u));
+    pointer-events: none;
+  }
+  .route-nl-hint {
+    font-size: calc(11 * var(--u));
+    color: var(--text-sub);
+    margin-bottom: calc(12 * var(--u));
+    opacity: .6;
+  }
+  .route-chip-time {
+    font-size: calc(12 * var(--u));
+    color: var(--text-sub);
+    margin-bottom: calc(8 * var(--u));
+    display: flex;
+    align-items: center;
+    gap: calc(6 * var(--u));
+  }
+  .route-chip-time .time-options {
+    display: flex;
+    gap: calc(8 * var(--u));
+  }
+  .route-chip-time .time-opt {
+    padding: calc(6 * var(--u)) calc(14 * var(--u));
+    border-radius: calc(16 * var(--u));
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-sub);
+    font-size: calc(12 * var(--u));
+    cursor: pointer;
+    transition: all .18s;
+    white-space: nowrap;
+  }
+  .route-chip-time .time-opt.sel {
+    background: var(--route-brand-soft);
+    border-color: var(--route-brand);
+    color: var(--route-brand);
+  }
+  .route-chips-scroll {
+    overflow: visible;
+    margin-bottom: calc(12 * var(--u));
+    padding-bottom: 0;
+  }
+  .route-chips-scroll::-webkit-scrollbar { display: none; }
+  .route-chips {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(8 * var(--u));
+  }
+  .route-param-control {
+    position: relative;
+    display: grid;
+    gap: calc(3 * var(--u));
+    min-width: 0;
+    padding: calc(5 * var(--u)) calc(8 * var(--u));
+    border-radius: calc(10 * var(--u));
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: border-color .18s ease, background .18s ease;
+    color: var(--text-main);
+    text-align: left;
+  }
+  .route-param-control:focus-within,
+  .route-param-control.set {
+    background: var(--route-brand-soft);
+    border-color: var(--route-brand);
+  }
+  .route-param-label {
+    color: var(--text-sub);
+    font-size: calc(9 * var(--u));
+  }
+  .route-param-value {
+    width: 100%;
+    padding: 0 calc(16 * var(--u)) 0 0;
+    color: var(--text-main);
+    font-size: calc(11 * var(--u));
+    font-weight: 600;
+  }
+  .route-param-control::after {
+    content: '';
+    position: absolute;
+    right: calc(11 * var(--u));
+    bottom: calc(13 * var(--u));
+    width: calc(6 * var(--u));
+    height: calc(6 * var(--u));
+    border-right: calc(1.5 * var(--u)) solid var(--text-sub);
+    border-bottom: calc(1.5 * var(--u)) solid var(--text-sub);
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+  .route-saved-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(12 * var(--u)) calc(14 * var(--u));
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(14 * var(--u));
+    margin-bottom: calc(14 * var(--u));
+  }
+  .route-saved-toggle .saved-left {
+    display: flex;
+    align-items: center;
+    gap: calc(8 * var(--u));
+    font-size: calc(13 * var(--u));
+    color: var(--text-sub);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    margin-right: calc(8 * var(--u));
+  }
+  .route-saved-toggle .saved-name {
+    color: var(--route-brand);
+    font-weight: 600;
+  }
+  .toggle-switch {
+    width: calc(44 * var(--u));
+    height: calc(26 * var(--u));
+    border-radius: calc(13 * var(--u));
+    background: var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: background .2s;
+    flex-shrink: 0;
+  }
+  .toggle-switch.on {
+    background: var(--route-brand);
+  }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: calc(3 * var(--u));
+    left: calc(3 * var(--u));
+    width: calc(20 * var(--u));
+    height: calc(20 * var(--u));
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .2s;
+  }
+  .toggle-switch.on::after {
+    transform: translateX(calc(18 * var(--u)));
+  }
+  .route-generate-btn {
+    width: 100%;
+    height: calc(36 * var(--u));
+    padding: 0 calc(14 * var(--u));
+    border-radius: calc(18 * var(--u));
+    background: var(--route-brand);
+    color: #0b0d09;
+    font-size: calc(13 * var(--u));
+    font-weight: 700;
+    margin-bottom: calc(14 * var(--u));
+    transition: all .18s ease;
+    letter-spacing: .5px;
+  }
+  .route-generate-btn:active {
+    transform: scale(.98);
+    opacity: .9;
+  }
+  .route-generate-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .route-generate-btn.plan-mode {
+    background: var(--route-brand);
+  }
+  .route-community-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: calc(14 * var(--u));
+  }
+  .route-community-header h3 {
+    margin: 0;
+    font-size: calc(17 * var(--u));
+    font-weight: 700;
+  }
+  .route-community-header a {
+    color: var(--route-brand);
+    font-size: calc(13 * var(--u));
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .route-community-cards {
+    display: flex;
+    flex-direction: column;
+    gap: calc(12 * var(--u));
+  }
+  .route-comm-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(16 * var(--u));
+    overflow: hidden;
+    cursor: pointer;
+    transition: all .18s ease;
+  }
+  .route-comm-card:active { transform: scale(.99); }
+  .route-comm-cover {
+    height: calc(100 * var(--u));
+    background: linear-gradient(135deg, var(--route-brand-deep), #10160e);
+    display: flex;
+    align-items: flex-end;
+    padding: calc(12 * var(--u));
+    position: relative;
+  }
+  .route-comm-cover.cover-green {
+    background: linear-gradient(135deg, #064e3b, #0d1f17);
+  }
+  .route-comm-cover .cover-users {
+    position: absolute;
+    top: calc(10 * var(--u));
+    right: calc(10 * var(--u));
+    padding: calc(4 * var(--u)) calc(10 * var(--u));
+    border-radius: calc(10 * var(--u));
+    background: rgba(0,0,0,.5);
+    color: #fff;
+    font-size: calc(11 * var(--u));
+    backdrop-filter: blur(4px);
+  }
+  .route-comm-cover .cover-title {
+    color: #fff;
+    font-size: calc(18 * var(--u));
+    font-weight: 700;
+  }
+  .route-comm-body {
+    padding: calc(14 * var(--u));
+  }
+  .route-comm-meta {
+    display: flex;
+    gap: calc(12 * var(--u));
+    font-size: calc(12 * var(--u));
+    color: var(--text-sub);
+    margin-bottom: calc(10 * var(--u));
+  }
+  .route-comm-meta span { display: flex; align-items: center; gap: calc(4 * var(--u)); }
+  .route-comm-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(6 * var(--u));
+    margin-bottom: calc(12 * var(--u));
+  }
+  .route-comm-tags span {
+    padding: calc(4 * var(--u)) calc(10 * var(--u));
+    border-radius: calc(8 * var(--u));
+    background: var(--surface-soft);
+    font-size: calc(11 * var(--u));
+    color: var(--text-sub);
+  }
+  .route-comm-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .route-comm-author {
+    display: flex;
+    align-items: center;
+    gap: calc(8 * var(--u));
+    font-size: calc(12 * var(--u));
+    color: var(--text-sub);
+  }
+  .route-comm-author .author-avatar {
+    width: calc(24 * var(--u));
+    height: calc(24 * var(--u));
+    border-radius: 50%;
+    background: var(--surface-soft);
+    display: grid;
+    place-items: center;
+    font-size: calc(12 * var(--u));
+  }
+  .route-comm-use-btn {
+    padding: calc(8 * var(--u)) calc(16 * var(--u));
+    border-radius: calc(10 * var(--u));
+    border: 1px solid var(--route-brand);
+    background: transparent;
+    color: var(--route-brand);
+    font-size: calc(12 * var(--u));
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .route-comm-use-btn:active {
+    background: var(--route-brand-soft);
+  }
+  .route-generating {
+    display: none;
+    padding: calc(20 * var(--u)) calc(16 * var(--u)) calc(100 * var(--u));
+  }
+  .route-generating.show { display: block; }
+  .route-gen-status {
+    display: flex;
+    align-items: center;
+    gap: calc(8 * var(--u));
+    margin-bottom: calc(20 * var(--u));
+    font-size: calc(15 * var(--u));
+    color: var(--route-brand);
+    font-weight: 600;
+  }
+  .route-gen-cursor {
+    display: inline-block;
+    width: 2px;
+    height: calc(16 * var(--u));
+    background: var(--route-brand);
+    animation: routeCursorBlink .6s infinite;
+    vertical-align: middle;
+    margin-left: calc(2 * var(--u));
+  }
+  @keyframes routeCursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .route-gen-stops {
+    display: flex;
+    flex-direction: column;
+    gap: calc(10 * var(--u));
+  }
+  .route-gen-placeholder {
+    height: calc(72 * var(--u));
+    border-radius: calc(14 * var(--u));
+    border: 2px dashed var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-sub);
+    font-size: calc(13 * var(--u));
+  }
+  .route-gen-placeholder.active {
+    border-color: var(--route-brand);
+    animation: routePlaceholderPulse 1s infinite;
+  }
+  @keyframes routePlaceholderPulse {
+    0%, 100% { opacity: .6; }
+    50% { opacity: 1; }
+  }
+  .route-stop-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(16 * var(--u));
+    overflow: hidden;
+    transition: all .3s ease;
+  }
+  .route-stop-card.activity {
+    min-height: calc(100 * var(--u));
+  }
+  .route-stop-card.place {
+    min-height: calc(56 * var(--u));
+  }
+  .route-stop-card.place .route-stop-cover {
+    height: calc(72 * var(--u));
+  }
+  .route-stop-card.selected {
+    border-color: var(--route-brand);
+  }
+  .route-stop-card.deselected {
+    opacity: .5;
+    border-style: dashed;
+  }
+  .route-stop-cover {
+    height: calc(100 * var(--u));
+    background: linear-gradient(135deg, var(--route-brand-deep), #10160e);
+    display: flex;
+    align-items: flex-end;
+    padding: calc(12 * var(--u));
+    position: relative;
+  }
+  .route-stop-cover .stop-badge {
+    position: absolute;
+    top: calc(10 * var(--u));
+    right: calc(10 * var(--u));
+    padding: calc(4 * var(--u)) calc(10 * var(--u));
+    border-radius: calc(8 * var(--u));
+    font-size: calc(11 * var(--u));
+    font-weight: 700;
+  }
+  .stop-badge.free { background: var(--green); color: #0b0d09; }
+  .stop-badge.paid { background: var(--route-brand); color: #0b0d09; }
+  .route-stop-body {
+    padding: calc(14 * var(--u));
+    display: flex;
+    align-items: flex-start;
+    gap: calc(12 * var(--u));
+  }
+  .route-stop-num {
+    width: calc(32 * var(--u));
+    height: calc(32 * var(--u));
+    border-radius: 50%;
+    background: var(--route-brand);
+    color: #0b0d09;
+    display: grid;
+    place-items: center;
+    font-size: calc(14 * var(--u));
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .route-stop-num.place-num {
+    background: var(--green);
+    font-size: calc(12 * var(--u));
+  }
+  .route-stop-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .route-stop-info .stop-title {
+    font-size: calc(15 * var(--u));
+    font-weight: 700;
+    margin-bottom: calc(4 * var(--u));
+  }
+  .route-stop-info .stop-location {
+    font-size: calc(12 * var(--u));
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    gap: calc(6 * var(--u));
+  }
+  .route-stop-info .stop-time-badge {
+    font-size: calc(11 * var(--u));
+    color: var(--orange);
+    font-weight: 600;
+    margin-top: calc(4 * var(--u));
+  }
+  .stop-tag.ai-rec { background: var(--green-soft); color: var(--green); }
+  .stop-tag.conflict { background: var(--red-soft); color: var(--red); }
+  .route-stop-check {
+    width: calc(28 * var(--u));
+    height: calc(28 * var(--u));
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all .18s;
+    font-size: calc(14 * var(--u));
+    color: transparent;
+    margin-left: auto;
+    align-self: center;
+  }
+  .route-stop-check.checked {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+  .route-reason {
+    background: var(--route-brand-soft);
+    border: 1px solid rgba(139,92,246,.3);
+    border-radius: calc(14 * var(--u));
+    padding: calc(14 * var(--u));
+    margin-top: calc(16 * var(--u));
+    font-size: calc(13 * var(--u));
+    color: var(--text-sub);
+    line-height: 1.6;
+  }
+  .route-reason-title {
+    display: flex;
+    align-items: center;
+    gap: calc(6 * var(--u));
+    color: var(--route-brand);
+    font-weight: 700;
+    font-size: calc(14 * var(--u));
+    margin-bottom: calc(6 * var(--u));
+  }
+  .route-bottom-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: 20;
+    transform: translateX(-50%);
+    width: min(100vw, calc(430 * var(--u)));
+    padding: calc(14 * var(--u)) calc(16 * var(--u)) calc(14 * var(--u) + env(safe-area-inset-bottom));
+    background: rgba(5,8,13,.96);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    display: none;
+  }
+  .route-bottom-bar.show { display: flex; }
+  .route-bottom-bar .bar-info {
+    font-size: calc(13 * var(--u));
+    color: var(--text-sub);
+  }
+  .route-bottom-bar .bar-info .count {
+    color: var(--route-brand);
+    font-weight: 700;
+  }
+  .route-bottom-bar .bar-info .count.low { color: var(--red); }
+  .route-bottom-bar .bar-info .cost {
+    color: var(--orange);
+    font-weight: 600;
+  }
+  .route-bottom-bar .bar-info .cost.over { color: var(--red); }
+  .route-bottom-bar .bar-action {
+    padding: calc(12 * var(--u)) calc(24 * var(--u));
+    border-radius: calc(14 * var(--u));
+    background: var(--route-brand);
+    color: #0b0d09;
+    font-size: calc(14 * var(--u));
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .route-bottom-bar .bar-action:disabled {
+    background: var(--surface-soft);
+    color: var(--text-sub);
+    cursor: not-allowed;
+  }
+  .route-edit-page {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--bg);
+    overflow-y: auto;
+  }
+  .route-edit-page.show { display: block; }
+  .route-edit-header {
+    display: flex;
+    align-items: center;
+    padding: calc(16 * var(--u));
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 2;
+  }
+  .route-edit-header .edit-back {
+    background: transparent;
+    color: var(--text-sub);
+    font-size: calc(14 * var(--u));
+    margin-right: calc(12 * var(--u));
+    cursor: pointer;
+  }
+  .route-edit-header .edit-title {
+    flex: 1;
+    font-size: calc(17 * var(--u));
+    font-weight: 700;
+    margin: 0;
+  }
+  .route-edit-header .edit-done {
+    padding: calc(8 * var(--u)) calc(16 * var(--u));
+    border-radius: calc(10 * var(--u));
+    background: var(--route-brand);
+    color: #0b0d09;
+    font-size: calc(13 * var(--u));
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .route-edit-summary {
+    display: flex;
+    gap: calc(20 * var(--u));
+    padding: calc(14 * var(--u)) calc(16 * var(--u));
+    font-size: calc(13 * var(--u));
+    color: var(--route-brand);
+  }
+  .route-edit-hint {
+    padding: calc(8 * var(--u)) calc(16 * var(--u));
+    font-size: calc(11 * var(--u));
+    color: var(--text-sub);
+    opacity: .6;
+  }
+  .route-edit-stops {
+    padding: 0 calc(16 * var(--u)) calc(40 * var(--u));
+  }
+  .route-edit-stop {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(14 * var(--u));
+    margin-bottom: calc(12 * var(--u));
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .route-edit-stop.swiped {
+    transform: translateX(calc(-132 * var(--u)));
+  }
+  .route-edit-stop .edit-stop-inner {
+    padding: calc(14 * var(--u));
+    display: flex;
+    align-items: flex-start;
+    gap: calc(10 * var(--u));
+    cursor: pointer;
+  }
+  .route-edit-stop .drag-handle {
+    width: calc(20 * var(--u));
+    display: grid;
+    grid-template-columns: repeat(2, 4px);
+    gap: 3px;
+    padding-top: calc(4 * var(--u));
+    flex-shrink: 0;
+    cursor: grab;
+    color: var(--text-sub);
+    font-size: calc(14 * var(--u));
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+  .route-edit-stop .stop-detail {
+    display: none;
+    padding: 0 calc(14 * var(--u)) calc(14 * var(--u));
+    border-top: 1px solid var(--border);
+    margin: 0 calc(14 * var(--u));
+    font-size: calc(12 * var(--u));
+    color: var(--text-sub);
+    line-height: 1.6;
+  }
+  .route-edit-stop.expanded .stop-detail {
+    display: block;
+  }
+  .route-edit-stop .swipe-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: calc(132 * var(--u));
+    display: flex;
+    flex-direction: column;
+  }
+  .route-edit-stop .swipe-btn {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: calc(13 * var(--u));
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .18s;
+  }
+  .swipe-btn.replace-btn {
+    background: var(--purple-deep);
+    box-shadow: 0 2px 8px rgba(139,92,246,.3);
+  }
+  .swipe-btn.delete-btn {
+    background: #3a1a1a;
+    box-shadow: 0 2px 8px rgba(239,68,68,.3);
+  }
+  .route-replace-sheet {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0,0,0,.6);
+  }
+  .route-replace-sheet.show { display: block; }
+  .route-replace-sheet .sheet-content {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(100vw, calc(430 * var(--u)));
+    background: var(--surface);
+    border-radius: calc(20 * var(--u)) calc(20 * var(--u)) 0 0;
+    padding: calc(20 * var(--u)) calc(16 * var(--u)) calc(30 * var(--u) + env(safe-area-inset-bottom));
+    animation: routeSlideUp .3s ease;
+  }
+  @keyframes routeSlideUp {
+    from { transform: translateX(-50%) translateY(100%); }
+    to { transform: translateX(-50%) translateY(0); }
+  }
+  .route-replace-sheet .sheet-handle {
+    width: calc(40 * var(--u));
+    height: calc(4 * var(--u));
+    border-radius: 2px;
+    background: var(--border);
+    margin: 0 auto calc(16 * var(--u));
+  }
+  .route-replace-sheet .sheet-title {
+    font-size: calc(16 * var(--u));
+    font-weight: 700;
+    margin-bottom: calc(14 * var(--u));
+  }
+  .route-replace-sheet .sheet-cards {
+    display: flex;
+    gap: calc(10 * var(--u));
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: calc(4 * var(--u));
+  }
+  .route-replace-sheet .sheet-cards::-webkit-scrollbar { display: none; }
+  .route-replace-card {
+    min-width: calc(140 * var(--u));
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: calc(14 * var(--u));
+    padding: calc(14 * var(--u));
+    cursor: pointer;
+    transition: all .18s;
+    flex-shrink: 0;
+  }
+  .route-replace-card:active { border-color: var(--route-brand); }
+  .route-replace-card .rep-title {
+    font-size: calc(14 * var(--u));
+    font-weight: 700;
+    margin-bottom: calc(6 * var(--u));
+  }
+  .route-replace-card .rep-meta {
+    font-size: calc(11 * var(--u));
+    color: var(--text-sub);
+    margin-bottom: calc(8 * var(--u));
+  }
+  .route-replace-card .rep-price {
+    display: inline-block;
+    padding: calc(4 * var(--u)) calc(10 * var(--u));
+    border-radius: calc(8 * var(--u));
+    font-size: calc(12 * var(--u));
+    font-weight: 700;
+    background: var(--route-brand-soft);
+    color: var(--route-brand);
+  }
+  .route-replace-card .rep-price.free {
+    background: var(--green-soft);
+    color: var(--green);
+  }
+  .route-replace-card.add-custom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: calc(120 * var(--u));
+    background: transparent;
+    border-style: dashed;
+    color: var(--text-sub);
+    font-size: calc(13 * var(--u));
+    gap: calc(8 * var(--u));
+  }
+  .route-replace-card.add-custom .add-icon {
+    width: calc(36 * var(--u));
+    height: calc(36 * var(--u));
+    border-radius: 50%;
+    border: 2px dashed var(--border);
+    display: grid;
+    place-items: center;
+    font-size: calc(18 * var(--u));
+  }
+
+  .route-filter-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 230;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(0, 0, 0, .66);
+    backdrop-filter: blur(calc(5 * var(--u)));
+  }
+  .route-filter-sheet.show { display: flex; }
+  .route-filter-panel {
+    width: min(calc(100vw - calc(24 * var(--u))), calc(406 * var(--u)));
+    margin-bottom: calc(12 * var(--u) + env(safe-area-inset-bottom));
+    padding: calc(10 * var(--u)) calc(14 * var(--u)) calc(16 * var(--u));
+    border: 1px solid rgba(255, 255, 255, .11);
+    border-radius: calc(22 * var(--u));
+    background: #11151a;
+    box-shadow: 0 calc(16 * var(--u)) calc(42 * var(--u)) rgba(0, 0, 0, .5);
+    animation: routeFilterUp .22s ease;
+  }
+  @keyframes routeFilterUp {
+    from { transform: translateY(calc(24 * var(--u))); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .route-filter-handle {
+    width: calc(38 * var(--u));
+    height: calc(4 * var(--u));
+    margin: 0 auto calc(12 * var(--u));
+    border-radius: calc(2 * var(--u));
+    background: rgba(255, 255, 255, .22);
+  }
+  .route-filter-title {
+    margin: 0 0 calc(12 * var(--u));
+    font-size: calc(16 * var(--u));
+  }
+  .route-filter-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(8 * var(--u));
+  }
+  .route-filter-option {
+    min-height: calc(40 * var(--u));
+    padding: calc(8 * var(--u)) calc(10 * var(--u));
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: calc(12 * var(--u));
+    background: #171c22;
+    color: #d9dde2;
+    font-size: calc(12 * var(--u));
+  }
+  .route-filter-option.selected {
+    border-color: var(--route-brand);
+    background: var(--route-brand-soft);
+    color: var(--route-brand);
+  }
+/* 异常提示 */
+  .route-alert {
+    display: none;
+    padding: calc(10 * var(--u)) calc(14 * var(--u));
+    border-radius: calc(12 * var(--u));
+    font-size: calc(12 * var(--u));
+    margin-bottom: calc(12 * var(--u));
+    line-height: 1.5;
+  }
+  .route-alert.show { display: block; }
+  .route-alert.info {
+    background: rgba(59,130,246,.12);
+    border: 1px solid rgba(59,130,246,.3);
+    color: #3b82f6;
+  }
+
+  /* ===== 导航视图 ===== */
+  .route-nav-page {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--bg);
+    overflow-y: auto;
+  }
+  .route-nav-page.show { display: block; }
+  .route-nav-header {
+    display: flex;
+    align-items: center;
+    padding: calc(16 * var(--u));
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 2;
+  }
+  .route-nav-header .nav-back {
+    background: transparent;
+    color: var(--text-sub);
+    font-size: calc(14 * var(--u));
+    margin-right: calc(12 * var(--u));
+    cursor: pointer;
+  }
+  .route-nav-header .nav-title {
+    flex: 1;
+    font-size: calc(17 * var(--u));
+    font-weight: 700;
+    margin: 0;
+  }
+  .route-nav-header .nav-fav {
+    width: calc(40 * var(--u));
+    height: calc(40 * var(--u));
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    margin-right: calc(10 * var(--u));
+    cursor: pointer;
+    font-size: calc(18 * var(--u));
+  }
+  .route-nav-header .nav-fav.faved {
+    background: var(--red-soft);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .route-nav-header .nav-share {
+    width: calc(40 * var(--u));
+    height: calc(40 * var(--u));
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: calc(18 * var(--u));
+  }
+  .route-nav-summary {
+    padding: calc(16 * var(--u));
+    border-bottom: 1px solid var(--border);
+  }
+  .route-nav-title {
+    font-size: calc(20 * var(--u));
+    font-weight: 700;
+    margin-bottom: calc(10 * var(--u));
+  }
+  .route-nav-meta {
+    display: flex;
+    gap: calc(20 * var(--u));
+    font-size: calc(14 * var(--u));
+    color: var(--text-sub);
+  }
+  .route-nav-meta span {
+    color: var(--route-brand);
+    font-weight: 600;
+  }
+  .route-nav-stops {
+    padding: 0 calc(16 * var(--u)) calc(80 * var(--u));
+  }
+  .route-nav-timeline {
+    position: relative;
+    padding-left: calc(32 * var(--u));
+    margin-top: calc(16 * var(--u));
+  }
+  .route-nav-timeline::before {
+    content: '';
+    position: absolute;
+    left: calc(12 * var(--u));
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .route-nav-item {
+    position: relative;
+    padding-bottom: calc(24 * var(--u));
+  }
+  .route-nav-item:last-child { padding-bottom: 0; }
+  .route-nav-dot {
+    position: absolute;
+    left: calc(-26 * var(--u));
+    top: calc(6 * var(--u));
+    width: calc(12 * var(--u));
+    height: calc(12 * var(--u));
+    border-radius: 50%;
+    background: var(--route-brand);
+    border: 2px solid var(--bg);
+  }
+  .route-nav-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(14 * var(--u));
+    padding: calc(14 * var(--u));
+  }
+  .route-nav-card.fixed {
+    border-color: var(--route-brand);
+    background: var(--route-brand-soft);
+  }
+  .route-nav-time {
+    font-size: calc(12 * var(--u));
+    color: var(--route-brand);
+    font-weight: 600;
+    margin-bottom: calc(6 * var(--u));
+  }
+  .route-nav-spot {
+    font-size: calc(16 * var(--u));
+    font-weight: 700;
+    margin-bottom: calc(4 * var(--u));
+  }
+  .route-nav-desc {
+    font-size: calc(13 * var(--u));
+    color: var(--text-sub);
+    margin-bottom: calc(8 * var(--u));
+    line-height: 1.5;
+  }
+  .route-nav-location {
+    font-size: calc(12 * var(--u));
+    color: var(--text-sub);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .route-nav-btn {
+    padding: calc(6 * var(--u)) calc(14 * var(--u));
+    border-radius: calc(8 * var(--u));
+    border: 1px solid var(--route-brand);
+    background: transparent;
+    color: var(--route-brand);
+    font-size: calc(12 * var(--u));
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .route-nav-btn:active { background: var(--route-brand-soft); }
+  .route-nav-footer {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: 20;
+    transform: translateX(-50%);
+    width: min(100vw, calc(430 * var(--u)));
+    padding: calc(14 * var(--u)) calc(16 * var(--u)) calc(14 * var(--u) + env(safe-area-inset-bottom));
+    background: rgba(5,8,13,.96);
+    border-top: 1px solid var(--border);
+  }
+  .route-nav-start {
+    width: 100%;
+    padding: calc(16 * var(--u));
+    border-radius: calc(16 * var(--u));
+    background: var(--route-brand);
+    color: #0b0d09;
+    font-size: calc(16 * var(--u));
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .route-nav-start:active { transform: scale(.98); }
+  .nav-alert {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: rgba(0,0,0,.6);
+    justify-content: center;
+    align-items: center;
+  }
+  .nav-alert.show { display: flex; }
+  .nav-alert-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(16 * var(--u));
+    padding: calc(20 * var(--u));
+    width: min(80vw, 280px);
+    text-align: center;
+  }
+  .nav-alert-title {
+    font-size: calc(16 * var(--u));
+    font-weight: 700;
+    margin-bottom: calc(8 * var(--u));
+  }
+  .nav-alert-text {
+    font-size: calc(13 * var(--u));
+    color: var(--text-sub);
+    margin-bottom: calc(20 * var(--u));
+  }
+  .nav-alert-ok {
+    width: 100%;
+    padding: calc(12 * var(--u));
+    border-radius: calc(10 * var(--u));
+    background: var(--route-brand);
+    color: #0b0d09;
+    font-size: calc(14 * var(--u));
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ===== 导航选择面板 ===== */
+  .route-nav-sheet {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 220;
+    background: rgba(0,0,0,.6);
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+  .route-nav-sheet.show { display: flex; }
+  .route-nav-sheet .sheet-inner {
+    width: min(100vw, calc(430 * var(--u)));
+    background: var(--surface);
+    border-radius: calc(20 * var(--u)) calc(20 * var(--u)) 0 0;
+    padding: calc(20 * var(--u)) calc(16 * var(--u)) calc(30 * var(--u) + env(safe-area-inset-bottom));
+    animation: routeSlideUp .3s ease;
+  }
+  .route-nav-sheet .sheet-handle {
+    width: calc(40 * var(--u));
+    height: calc(4 * var(--u));
+    border-radius: 2px;
+    background: var(--border);
+    margin: 0 auto calc(16 * var(--u));
+  }
+  .route-nav-sheet .sheet-title {
+    font-size: calc(16 * var(--u));
+    font-weight: 700;
+    margin-bottom: calc(6 * var(--u));
+  }
+  .route-nav-sheet .sheet-subtitle {
+    font-size: calc(13 * var(--u));
+    color: var(--text-sub);
+    margin-bottom: calc(18 * var(--u));
+    line-height: 1.5;
+  }
+  .route-nav-sheet .sheet-maps {
+    display: flex;
+    flex-direction: column;
+    gap: calc(10 * var(--u));
+  }
+  .route-map-option {
+    display: flex;
+    align-items: center;
+    gap: calc(14 * var(--u));
+    padding: calc(14 * var(--u)) calc(16 * var(--u));
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: calc(14 * var(--u));
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .route-map-option:active { border-color: var(--route-brand); background: var(--route-brand-soft); }
+  .route-map-option .map-icon {
+    width: calc(44 * var(--u));
+    height: calc(44 * var(--u));
+    border-radius: calc(12 * var(--u));
+    display: grid;
+    place-items: center;
+    font-size: calc(20 * var(--u));
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .map-icon.amap { background: #1677ff; color: #fff; }
+  .map-icon.baidu { background: #f0f8ff; color: #2932e1; }
+  .map-icon.tencent { background: #07c160; color: #fff; }
+  .map-icon.apple { background: #000; color: #fff; }
+  .map-icon.browser { background: var(--border); color: var(--text-main); }
+  .route-map-option .map-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .route-map-option .map-name {
+    font-size: calc(15 * var(--u));
+    font-weight: 600;
+    margin-bottom: calc(2 * var(--u));
+  }
+  .route-map-option .map-desc {
+    font-size: calc(12 * var(--u));
+    color: var(--text-sub);
+  }
+  .route-map-option .map-arrow {
+    color: var(--text-sub);
+    font-size: calc(14 * var(--u));
+  }
+  .route-nav-sheet .sheet-cancel {
+    width: 100%;
+    padding: calc(14 * var(--u));
+    margin-top: calc(12 * var(--u));
+    border-radius: calc(14 * var(--u));
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    font-size: calc(14 * var(--u));
+    cursor: pointer;
+  }
+</style>
+
+<div class="route-page" id="routeHomeView">
+  <div class="route-header">
+    <div class="route-branding"><img class="route-logo" src="assets/icons/community-logo.png" alt="Echoland 回声地"></div>
+    <button class="home-location route-city" type="button" onclick="routeToggleCity()" aria-label="当前城市：南京">
+      <span class="home-location-pin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.8A2.8 2.8 0 1 1 12 6a2.8 2.8 0 0 1 0 5.8Z"/></svg></span>
+      <span class="route-city-name">南京</span><span class="home-location-arrow" aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="route-mode-tip" id="routeModeTip">帮你安排</div>
+  <div class="route-nl-input-wrap">
+    <span class="nl-icon">&#9733;</span>
+    <input type="text" id="routeNlInput" placeholder="明晚想听点独立音乐，预算100以内..." oninput="routeOnNlInput()" onkeydown="if(event.key==='Enter')routeGenerate()">
+  </div>
+  <div class="route-nl-hint">告诉 AI 你的想法，或直接调整下方参数</div>
+  <div class="route-chip-time">
+    <span>时间</span>
+    <div class="time-options" id="routeTimeOptions">
+      <span class="time-opt sel" data-val="今晚" onclick="routeSetTime('今晚')">今晚</span>
+      <span class="time-opt" data-val="明天" onclick="routeSetTime('明天')">明天</span>
+      <span class="time-opt" data-val="周六" onclick="routeSetTime('周六')">周六</span>
+      <span class="time-opt" data-val="自定义" onclick="routeSetTime('自定义')">自定义</span>
+    </div>
+  </div>
+  <div class="route-chips-scroll">
+    <div class="route-chips" id="routeChips"></div>
+  </div>
+  <div class="route-alert" id="routeAlert"></div>
+  <button class="route-generate-btn" id="routeGenerateBtn" onclick="routeGenerate()">立刻生成</button>
+  <div class="route-community-header">
+    <h3>大家的路线</h3>
+    <a href="#">全部 &rarr;</a>
+  </div>
+  <div class="route-community-cards" id="routeCommunityCards"></div>
+</div>
+
+<div class="route-generating" id="routeGenView">
+  <div class="route-gen-status">
+    &#9733; <span id="routeGenText"></span><span class="route-gen-cursor"></span>
+  </div>
+  <div class="route-gen-stops" id="routeGenStops"></div>
+</div>
+
+<div class="route-bottom-bar" id="routeBottomBar">
+  <div class="bar-info">
+    <span class="count" id="barSelectedCount">3</span> 个站点 &middot; 预计 <span class="cost" id="barCost">¥69</span>
+  </div>
+  <button class="bar-action" id="barActionBtn" onclick="routeSaveToEdit()">生成我的路线</button>
+</div>
+
+<div class="route-edit-page" id="routeEditPage">
+  <div class="route-edit-header">
+    <button class="edit-back" onclick="routeCloseEdit()">&larr; 返回</button>
+    <h3 class="edit-title" id="routeEditTitle">周五夜晚独立音乐路线</h3>
+    <button class="edit-done" onclick="routeCloseEdit()">完成</button>
+  </div>
+  <div class="route-edit-summary">
+    <span id="editDuration">2.5h</span> &middot; <span id="editCost">¥69</span>
+  </div>
+  <div class="route-edit-hint">&larr; 左滑卡片可替换或删除</div>
+  <div class="route-edit-stops" id="routeEditStops"></div>
+</div>
+
+<div class="route-replace-sheet" id="routeReplaceSheet" onclick="if(event.target===this)routeCloseReplace()">
+  <div class="sheet-content">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">换一个类似的活动</div>
+    <div class="sheet-cards" id="routeReplaceCards"></div>
+  </div>
+</div>
+
+<div class="route-filter-sheet" id="routeFilterSheet" aria-hidden="true">
+  <div class="route-filter-panel" role="dialog" aria-modal="true" aria-labelledby="routeFilterTitle">
+    <div class="route-filter-handle"></div>
+    <h3 class="route-filter-title" id="routeFilterTitle">选择筛选条件</h3>
+    <div class="route-filter-options" id="routeFilterOptions"></div>
+  </div>
+</div>
+
+<!-- 路线导航页 -->
+<div class="route-nav-page" id="routeNavPage">
+  <div class="route-nav-header">
+    <button class="nav-back" onclick="routeCloseNav()">&larr; 返回</button>
+    <h3 class="nav-title">路线详情</h3>
+    <div class="nav-fav" id="navFavBtn" onclick="routeToggleNavFav()">&#9825;</div>
+    <div class="nav-share" onclick="routeShareRoute()">&#10169;</div>
+  </div>
+  <div class="route-nav-summary">
+    <div class="route-nav-title" id="navTitle">周五夜晚独立音乐路线</div>
+    <div class="route-nav-meta">
+      <span id="navDuration">2.5h</span> 总时长
+      &nbsp;&nbsp;<span id="navCost">¥69</span> 总花费
+      &nbsp;&nbsp;<span id="navStops">4</span> 个站点
+    </div>
+  </div>
+  <div class="route-nav-stops">
+    <div class="route-nav-timeline" id="navTimeline"></div>
+  </div>
+  <div class="route-nav-footer">
+    <button class="route-nav-start" id="navStartBtn" onclick="routeStartNav()">开始导航</button>
+  </div>
+</div>
+
+<!-- 分享弹窗 -->
+<div class="nav-alert" id="navShareAlert" onclick="if(event.target===this)routeCloseShareAlert()">
+  <div class="nav-alert-box">
+    <div class="nav-alert-title">分享路线</div>
+    <div class="nav-alert-text">路线已复制到剪贴板：<br>"周五夜晚独立音乐路线 - 4站 · 2.5h · ¥69"</div>
+    <button class="nav-alert-ok" onclick="routeCloseShareAlert()">好的</button>
+  </div>
+</div>
+
+<!-- 导航选择面板 -->
+<div class="route-nav-sheet" id="routeNavSheet" onclick="if(event.target===this)routeCloseNavSheet()">
+  <div class="sheet-inner">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="navSheetTitle">选择导航方式</div>
+    <div class="sheet-subtitle" id="navSheetSubtitle">步行约 15 分钟</div>
+    <div class="sheet-maps" id="navSheetMaps"></div>
+    <button class="sheet-cancel" onclick="routeCloseNavSheet()">取消</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  // STATE
+  let routeIsTonight = true;
+  let routeChipValues = {
+    budget: '不限', duration: '2h', activityType: '混合',
+    quiet: '中', nightlife: '中', transport: '步行', companion: '独自',
+    energy: '轻松', social: '小圈子'
+  };
+  let routeSavedOn = false;
+  let routeGenStops = [];
+  let routeSelectedStops = {};
+  let routeEditStops = [];
+  let routeGenTimers = [];
+
+  const CHIP_OPTIONS = {
+    budget: ['不限', '≤¥50', '≤¥100', '≤¥200'],
+    duration: ['1h', '2h', '3h', '4h+'],
+    activityType: ['混合', '音乐', '展览', '放映', '市集', '夜游'],
+    quiet: ['低', '中', '高', '极安静'],
+    nightlife: ['低', '中', '高'],
+    transport: ['步行', '骑车', '开车'],
+    companion: ['独自', '双人', '小组(3-6)'],
+    energy: ['轻松', '适中', '高强度'],
+    social: ['独处', '认识新朋友', '小圈子']
+  };
+
+  const CHIP_LABELS = {
+    budget: '预算', duration: '时长', activityType: '类型',
+    quiet: '安静', nightlife: '夜生活', transport: '出行',
+    companion: '同行', energy: '体力', social: '社交'
+  };
+
+  const ROUTE_GEN_DATA = {
+    title: '周五夜晚独立音乐路线',
+    duration: '2.5h',
+    totalCost: 69,
+    reason: '从安静书店开始，沉浸于音乐现场的能量，路线全程步行友好、预算友好。',
+    stops: [
+      { id: 's1', type: 'activity', time: '19:30', title: '废墟摄影夜行', location: '老工业园区', price: 0, priceLabel: '免费', tag: null, timeBadge: '距开始2小时', desc: '用镜头记录锈迹与光影的故事，园区探索约2小时。已有12人报名。', tags: ['探索','废墟感'], lat: 32.105, lng: 118.745 },
+      { id: 's2', type: 'place', time: '途中', title: '先锋书店', location: '五台山店', price: 0, priceLabel: '', tag: 'AI推荐', timeBadge: '', desc: '南京文化地标，地下车库改造的独立书店，安静阅读30分钟。', tags: ['书店','安静'], lat: 32.048, lng: 118.773 },
+      { id: 's3', type: 'activity', time: '21:00', title: '地下乐队演出', location: '隐秘Livehouse', price: 69, priceLabel: '¥69', tag: null, timeBadge: '', desc: '三支本地独立乐队轮番登台，预计演出2小时。', tags: ['音乐','现场'], lat: 32.060, lng: 118.778 },
+      { id: 's4', type: 'place', time: '收尾', title: '老门东夜市', location: '街头美食', price: 0, priceLabel: '', tag: 'AI推荐', timeBadge: '', desc: '演出结束后步行15分钟可达，街头小吃与夜市氛围。', tags: ['美食','夜市'], lat: 32.016, lng: 118.788 }
+    ]
+  };
+
+  const REPLACE_CANDIDATES = [
+    { title: '噪音实验专场', time: '周六 21:30', location: '鼓楼', price: 55 },
+    { title: '民谣之夜', time: '周六 20:00', location: '秦淮', price: 0 },
+    { title: '电子音乐派对', time: '周六 22:00', location: '玄武', price: 88 }
+  ];
+
+  const COMMUNITY_ROUTES = [
+    { title: '鼓楼深夜文艺路线', duration: '4h', cost: '约¥80', area: '鼓楼区', users: '238人用过', author: '光影捕手', tags: ['展览','书店','深夜'], coverClass: '' },
+    { title: '秦淮独立音乐夜', duration: '3h', cost: '约¥69', area: '秦淮区', users: '91人用过', author: '夜行者', tags: ['音乐','市集'], coverClass: 'cover-green' },
+    { title: '周末白天文艺市集路线', duration: '3.5h', cost: '约¥120', area: '玄武区', users: '156人用过', author: '市集达人', tags: ['市集','展览','下午'], coverClass: 'cover-green' }
+  ];
+
+  // ====== INIT ======
+  function routeInit() {
+    routeRenderParamControls();
+    routeSyncChips();
+    renderCommunityRoutes();
+    routeUpdateSavedToggle();
+  }
+
+  // ====== TIME ======
+  window.routeSetTime = function(val) {
+    routeIsTonight = (val === '今晚');
+    document.querySelectorAll('#routeTimeOptions .time-opt').forEach(o => {
+      o.classList.toggle('sel', o.dataset.val === val);
+    });
+    routeUpdateMode();
+  };
+
+  // ====== CHIPS ======
+  function routeRenderParamControls() {
+    const container = document.getElementById('routeChips');
+    if (!container) return;
+    container.innerHTML = Object.keys(CHIP_OPTIONS).map(key => `
+      <button class="route-param-control" type="button" data-route-param-trigger="${key}" aria-label="选择${CHIP_LABELS[key]}">
+        <span class="route-param-label">${CHIP_LABELS[key]}</span>
+        <span class="route-param-value">${routeChipValues[key]}</span>
+      </button>
+    `).join('');
+    container.querySelectorAll('[data-route-param-trigger]').forEach(button => button.addEventListener('click', () => routeOpenFilter(button.dataset.routeParamTrigger)));
+  }
+
+  window.routeChipCycle = function(key) {
+    if (!CHIP_OPTIONS[key]) return;
+    routeSyncChips();
+  };
+
+  function routeSyncChips() {
+    document.querySelectorAll('#routeChips [data-route-param-trigger]').forEach(control => {
+      let key = control.dataset.routeParamTrigger;
+      if (!key) return;
+      let val = routeChipValues[key];
+      control.querySelector('.route-param-value').textContent = val;
+      control.classList.toggle('set', val !== CHIP_OPTIONS[key][0]);
+    });
+  }
+
+  function routeOpenFilter(key) {
+    const sheet = document.getElementById('routeFilterSheet');
+    const title = document.getElementById('routeFilterTitle');
+    const options = document.getElementById('routeFilterOptions');
+    if (!sheet || !CHIP_OPTIONS[key]) return;
+    sheet.dataset.key = key;
+    title.textContent = `选择${CHIP_LABELS[key]}`;
+    options.innerHTML = CHIP_OPTIONS[key].map(value => `<button class="route-filter-option${value === routeChipValues[key] ? ' selected' : ''}" type="button" data-route-filter-value="${value}">${value}</button>`).join('');
+    sheet.classList.add('show');
+    sheet.setAttribute('aria-hidden', 'false');
+  }
+
+  function routeCloseFilter() {
+    const sheet = document.getElementById('routeFilterSheet');
+    if (!sheet) return;
+    sheet.classList.remove('show');
+    sheet.setAttribute('aria-hidden', 'true');
+  }
+
+  document.getElementById('routeFilterSheet')?.addEventListener('click', event => {
+    const sheet = event.currentTarget;
+    const option = event.target.closest('[data-route-filter-value]');
+    if (event.target === sheet) routeCloseFilter();
+    if (option) {
+      routeChipValues[sheet.dataset.key] = option.dataset.routeFilterValue;
+      routeSyncChips();
+      routeCloseFilter();
+    }
+  });
+
+  function routeUpdateMode() {
+    let tip = document.getElementById('routeModeTip');
+    let btn = document.getElementById('routeGenerateBtn');
+    let input = document.getElementById('routeNlInput');
+    if (routeIsTonight) {
+      tip.textContent = '帮你安排';
+      btn.textContent = '立刻生成';
+      btn.className = 'route-generate-btn';
+      input.placeholder = '明晚想听点独立音乐，预算100以内...';
+    } else {
+      tip.textContent = 'AI 帮你规划行程';
+      btn.textContent = '生成路线';
+      btn.className = 'route-generate-btn plan-mode';
+      input.placeholder = '周六下午想带朋友逛市集...';
+    }
+  }
+
+  // ====== SAVED ======
+  window.routeToggleSaved = function() {
+    routeSavedOn = !routeSavedOn;
+    routeUpdateSavedToggle();
+  };
+
+  function routeUpdateSavedToggle() {
+    let sw = document.getElementById('routeSavedSwitch');
+    if (!sw) return;
+    sw.className = 'toggle-switch' + (routeSavedOn ? ' on' : '');
+  }
+
+  // ====== NL INPUT ======
+  window.routeOnNlInput = function() {
+    let val = document.getElementById('routeNlInput').value;
+    if (val.includes('今晚')) { routeIsTonight = true; routeSetTime('今晚'); }
+    else if (val.includes('明天') || val.includes('周六') || val.includes('周日')) { routeIsTonight = false; routeSetTime('明天'); }
+    if (val.includes('100') || val.includes('穷游')) routeChipValues.budget = '≤¥100';
+    if (val.includes('50') && !val.includes('150')) routeChipValues.budget = '≤¥50';
+    if (val.includes('3小时') || val.includes('三小时')) routeChipValues.duration = '3h';
+    if (val.includes('4小时') || val.includes('四小时')) routeChipValues.duration = '4h+';
+    if (val.includes('独立音乐') || val.includes('音乐')) routeChipValues.activityType = '音乐';
+    if (val.includes('展览')) routeChipValues.activityType = '展览';
+    if (val.includes('安静')) routeChipValues.quiet = '高';
+    if (val.includes('不想太嗨')) routeChipValues.nightlife = '低';
+    if (val.includes('骑车')) routeChipValues.transport = '骑车';
+    if (val.includes('开车')) routeChipValues.transport = '开车';
+    if (val.includes('一个人') || val.includes('独自')) routeChipValues.companion = '独自';
+    if (val.includes('朋友') || val.includes('带')) routeChipValues.companion = '小组(3-6)';
+    if (val.includes('不想走')) routeChipValues.energy = '轻松';
+    if (val.includes('认识新朋友')) routeChipValues.social = '认识新朋友';
+    routeSyncChips();
+    routeUpdateMode();
+  };
+
+  // ====== GENERATE ======
+  window.routeGenerate = function() {
+    // Clear any existing timers
+    routeGenTimers.forEach(t => clearInterval(t));
+    routeGenTimers = [];
+
+    let homeView = document.getElementById('routeHomeView');
+    let genView = document.getElementById('routeGenView');
+    let bottomBar = document.getElementById('routeBottomBar');
+    let alert = document.getElementById('routeAlert');
+
+    alert.classList.remove('show');
+    homeView.style.display = 'none';
+    genView.classList.add('show');
+    bottomBar.classList.remove('show');
+
+    let genText = document.getElementById('routeGenText');
+    let genStops = document.getElementById('routeGenStops');
+    let stopCount = ROUTE_GEN_DATA.stops.length;
+
+    genText.textContent = '';
+    genStops.innerHTML = '';
+    for (let i = 0; i < stopCount; i++) {
+      let ph = document.createElement('div');
+      ph.className = 'route-gen-placeholder';
+      ph.textContent = '... 站点生成中';
+      genStops.appendChild(ph);
+    }
+
+    let msg = routeIsTonight
+      ? '正在为你匹配今晚的路线...'
+      : '正在为你规划周末的文艺路线...';
+    let idx = 0;
+    let t1 = setInterval(() => {
+      if (idx < msg.length) {
+        genText.textContent += msg[idx];
+        idx++;
+      } else {
+        clearInterval(t1);
+        let sIdx = 0;
+        let t2 = setInterval(() => {
+          if (sIdx < stopCount) {
+            genStops.children[sIdx].classList.add('active');
+            setTimeout(() => {
+              let stop = ROUTE_GEN_DATA.stops[sIdx];
+              let el = genStops.children[sIdx];
+              el.classList.remove('active','route-gen-placeholder');
+              el.outerHTML = renderStopCard(stop, sIdx, 'preview');
+            }, 600);
+            sIdx++;
+          } else {
+            clearInterval(t2);
+            setTimeout(() => routeFinishGeneration(), 500);
+          }
+        }, 800);
+        routeGenTimers.push(t2);
+      }
+    }, 40);
+    routeGenTimers.push(t1);
+  };
+
+  function renderStopCard(stop, index, mode) {
+    let isActivity = stop.type === 'activity';
+    let numMap = {0:1, 1:'A', 2:2, 3:'B'};
+    let num = numMap[index] || index;
+    let numClass = 'route-stop-num' + (isActivity ? '' : ' place-num');
+    let checked = mode === 'preview' ? false : (routeSelectedStops[stop.id] !== false);
+    let cardClass = 'route-stop-card ' + (isActivity ? 'activity' : 'place');
+    if (mode === 'selection') cardClass += checked ? ' selected' : ' deselected';
+
+    let coverImages = {
+      's1': 'linear-gradient(135deg, #1a2a1f, #0d1a12)',
+      's2': 'linear-gradient(135deg, #1f2a1a, #12180d)',
+      's3': 'linear-gradient(135deg, #2a1a2a, #180d18)',
+      's4': 'linear-gradient(135deg, #2a241a, #18140d)'
+    };
+
+    let html = '<div class="' + cardClass + '" data-id="' + stop.id + '">';
+    let coverBg = coverImages[stop.id] || 'linear-gradient(135deg, var(--route-brand-deep), #10160e)';
+    html += '<div class="route-stop-cover" style="background:' + coverBg + '">';
+    if (isActivity) {
+      html += '<div class="stop-badge ' + (stop.price === 0 ? 'free' : 'paid') + '">' + (stop.price === 0 ? '免费' : stop.priceLabel) + '</div>';
+    }
+    html += '</div>';
+    html += '<div class="route-stop-body">';
+    html += '<div class="' + numClass + '">' + num + '</div>';
+    html += '<div class="route-stop-info">';
+    html += '<div class="stop-title">' + stop.title + '</div>';
+    html += '<div class="stop-location">' + stop.location;
+    if (stop.tag) html += '<span class="stop-tag ai-rec">' + stop.tag + '</span>';
+    html += '</div>';
+    if (stop.timeBadge && isActivity) html += '<div class="stop-time-badge">' + stop.timeBadge + '</div>';
+    html += '</div>';
+    if (mode === 'selection') {
+      html += '<div class="route-stop-check' + (checked ? ' checked' : '') + '" onclick="event.stopPropagation();routeToggleStop(\'' + stop.id + '\')">&#10003;</div>';
+    } else {
+      html += '<div class="route-stop-check checked">&#10003;</div>';
+    }
+    html += '</div></div>';
+    return html;
+  }
+
+  function routeFinishGeneration() {
+    let genView = document.getElementById('routeGenView');
+    let bottomBar = document.getElementById('routeBottomBar');
+
+    routeGenStops = JSON.parse(JSON.stringify(ROUTE_GEN_DATA.stops));
+    routeSelectedStops = {};
+    routeGenStops.forEach(s => routeSelectedStops[s.id] = true);
+
+    let genStops = document.getElementById('routeGenStops');
+    genStops.innerHTML = routeGenStops.map((s, i) => renderStopCard(s, i, 'selection')).join('');
+
+    let reasonDiv = document.createElement('div');
+    reasonDiv.className = 'route-reason';
+    reasonDiv.innerHTML = '<div class="route-reason-title">&#9733; 推荐理由</div>' + ROUTE_GEN_DATA.reason;
+    genStops.appendChild(reasonDiv);
+
+    bottomBar.classList.add('show');
+    routeUpdateBottomBar();
+  }
+
+  window.routeToggleStop = function(id) {
+    routeSelectedStops[id] = !routeSelectedStops[id];
+    let card = document.querySelector('[data-id="' + id + '"]');
+    let check = card.querySelector('.route-stop-check');
+    if (routeSelectedStops[id]) {
+      card.classList.remove('deselected');
+      card.classList.add('selected');
+      check.classList.add('checked');
+    } else {
+      card.classList.remove('selected');
+      card.classList.add('deselected');
+      check.classList.remove('checked');
+    }
+    routeUpdateBottomBar();
+  };
+
+  function routeUpdateBottomBar() {
+    let selected = Object.entries(routeSelectedStops).filter(([k,v]) => v).length;
+    let cost = routeGenStops.filter(s => routeSelectedStops[s.id]).reduce((sum, s) => sum + s.price, 0);
+    let countEl = document.getElementById('barSelectedCount');
+    let costEl = document.getElementById('barCost');
+    let actionBtn = document.getElementById('barActionBtn');
+
+    countEl.textContent = selected;
+    costEl.textContent = '¥' + cost;
+
+    if (selected < 2) {
+      countEl.classList.add('low');
+      actionBtn.disabled = true;
+      actionBtn.textContent = '至少选择2个站点';
+      let alert = document.getElementById('routeAlert');
+      alert.className = 'route-alert info show';
+      alert.textContent = '至少选择2个站点才能生成路线';
+    } else {
+      countEl.classList.remove('low');
+      actionBtn.disabled = false;
+      actionBtn.textContent = '生成我的路线';
+      document.getElementById('routeAlert').classList.remove('show');
+    }
+  }
+
+  // ====== SAVE TO EDIT ======
+  window.routeSaveToEdit = function() {
+    let selected = Object.entries(routeSelectedStops).filter(([k,v]) => v).length;
+    if (selected < 2) return;
+    routeEditStops = routeGenStops.filter(s => routeSelectedStops[s.id]).map(s => JSON.parse(JSON.stringify(s)));
+    document.getElementById('routeEditTitle').textContent = ROUTE_GEN_DATA.title;
+    document.getElementById('routeGenView').classList.remove('show');
+    document.getElementById('routeHomeView').style.display = 'none';
+    document.getElementById('routeBottomBar').classList.remove('show');
+    document.getElementById('routeEditPage').classList.add('show');
+    routeRenderEditStops();
+    routeUpdateEditSummary();
+  };
+
+  function routeRenderEditStops() {
+    let container = document.getElementById('routeEditStops');
+    container.innerHTML = routeEditStops.map((s, i) => {
+      let isActivity = s.type === 'activity';
+      let num = isActivity ? (i + 1) : String.fromCharCode(65 + (i - 1));
+      let numClass = 'route-stop-num' + (isActivity ? '' : ' place-num');
+      return '<div class="route-edit-stop" data-idx="' + i + '">' +
+        '<div class="swipe-actions">' +
+          '<div class="swipe-btn replace-btn" onclick="event.stopPropagation();routeOpenReplace(' + i + ')">替换</div>' +
+          '<div class="swipe-btn delete-btn" onclick="event.stopPropagation();routeDeleteStop(' + i + ')">删除</div>' +
+        '</div>' +
+        '<div class="edit-stop-inner" onclick="routeToggleEditExpand(event,' + i + ')">' +
+          '<div class="drag-handle">::</div>' +
+          '<div class="' + numClass + '">' + num + '</div>' +
+          '<div class="route-stop-info">' +
+            '<div class="stop-title">' + s.title + '</div>' +
+            '<div class="stop-location">' + s.location + (s.price ? ' · ' + s.priceLabel : '') +
+              (s.tag ? '<span class="stop-tag ai-rec">' + s.tag + '</span>' : '') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="stop-detail">' + s.desc + '</div>' +
+      '</div>';
+    }).join('');
+
+    container.querySelectorAll('.route-edit-stop').forEach(card => {
+      let startX = 0, startY = 0;
+      card.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+      card.addEventListener('touchmove', e => {
+        let dx = e.touches[0].clientX - startX;
+        let dy = e.touches[0].clientY - startY;
+        if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) && dx < 0) {
+          card.classList.add('swiped');
+        } else if (dx > 12 && Math.abs(dx) > Math.abs(dy)) {
+          card.classList.remove('swiped');
+        }
+      }, { passive: true });
+      card.addEventListener('mouseleave', () => card.classList.remove('swiped'));
+    });
+  }
+
+  window.routeToggleEditExpand = function(e, idx) {
+    let card = document.querySelector('.route-edit-stop[data-idx="' + idx + '"]');
+    if (card.classList.contains('swiped')) {
+      card.classList.remove('swiped');
+      return;
+    }
+    document.querySelectorAll('.route-edit-stop.expanded').forEach(c => {
+      if (c.dataset.idx !== String(idx)) c.classList.remove('expanded');
+    });
+    card.classList.toggle('expanded');
+  };
+
+  window.routeDeleteStop = function(idx) {
+    if (routeEditStops.length <= 2) {
+      alert('路线至少需要保留2个站点');
+      return;
+    }
+    routeEditStops.splice(idx, 1);
+    routeRenderEditStops();
+    routeUpdateEditSummary();
+  };
+
+  window.routeOpenReplace = function(idx) {
+    let sheet = document.getElementById('routeReplaceSheet');
+    let cards = document.getElementById('routeReplaceCards');
+    cards.innerHTML = REPLACE_CANDIDATES.map(c =>
+      '<div class="route-replace-card" onclick="routeDoReplace(' + idx + ',' + c.price + ',\'' + c.title + '\')">' +
+        '<div class="rep-title">' + c.title + '</div>' +
+        '<div class="rep-meta">' + c.time + ' · ' + c.location + '</div>' +
+        '<div class="rep-price' + (c.price === 0 ? ' free' : '') + '">' + (c.price === 0 ? '免费' : '¥' + c.price) + '</div>' +
+      '</div>'
+    ).join('') +
+    '<div class="route-replace-card add-custom" onclick="routeCloseReplace()"><div class="add-icon">+</div>自己添加</div>';
+    sheet.classList.add('show');
+  };
+
+  window.routeDoReplace = function(idx, price, title) {
+    routeEditStops[idx].price = price;
+    routeEditStops[idx].priceLabel = price === 0 ? '免费' : '¥' + price;
+    routeEditStops[idx].title = title;
+    routeRenderEditStops();
+    routeUpdateEditSummary();
+    routeCloseReplace();
+  };
+
+  window.routeCloseReplace = function() {
+    document.getElementById('routeReplaceSheet').classList.remove('show');
+  };
+
+  function routeUpdateEditSummary() {
+    let cost = routeEditStops.reduce((s, c) => s + c.price, 0);
+    let dur = routeEditStops.length * 0.6 + 0.5;
+    document.getElementById('editDuration').textContent = dur.toFixed(1) + 'h';
+    document.getElementById('editCost').textContent = '¥' + cost;
+  }
+
+  window.routeCloseEdit = function() {
+    // 保存当前编辑结果，打开导航页
+    routeOpenNav();
+  };
+
+  // ====== NAVIGATION ======
+  let routeNavFaved = false;
+  let routeNavStops = [];
+  let routeNavTargetIdx = 0;
+  let routeUserLoc = null; // { lat, lng }
+
+  window.routeOpenNav = function() {
+    routeNavStops = routeEditStops.map(s => JSON.parse(JSON.stringify(s)));
+    let dur = routeNavStops.length * 0.6 + 0.5;
+    let cost = routeNavStops.reduce((s, c) => s + c.price, 0);
+
+    document.getElementById('routeEditPage').classList.remove('show');
+    document.getElementById('navTitle').textContent = document.getElementById('routeEditTitle').textContent;
+    document.getElementById('navDuration').textContent = dur.toFixed(1) + 'h';
+    document.getElementById('navCost').textContent = '¥' + cost;
+    document.getElementById('navStops').textContent = routeNavStops.length;
+
+    // Render timeline
+    let timeline = document.getElementById('navTimeline');
+    let now = 19;
+    timeline.innerHTML = routeNavStops.map((s, i) => {
+      let timeStr = (s.type === 'activity') ? (now + ':00') : '途经';
+      if (s.type === 'activity' && i > 0) now = now + 1;
+      return '<div class="route-nav-item">' +
+        '<div class="route-nav-dot"></div>' +
+        '<div class="route-nav-card">' +
+          '<div class="route-nav-time">' + timeStr + '</div>' +
+          '<div class="route-nav-spot">' + s.title + '</div>' +
+          '<div class="route-nav-desc">' + s.desc + '</div>' +
+          '<div class="route-nav-location">' +
+            '<span>' + s.location + '</span>' +
+            '<button class="route-nav-btn" onclick="event.stopPropagation();routeNavToHere(' + i + ')">&rarr; 到这里</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    routeNavFaved = false;
+    routeNavTargetIdx = 0;
+    document.getElementById('navFavBtn').textContent = '\u2661';
+    document.getElementById('navFavBtn').classList.remove('faved');
+    document.getElementById('navStartBtn').textContent = '开始导航';
+    document.getElementById('routeNavPage').classList.add('show');
+
+    // Try to get user location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(pos) { routeUserLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude }; },
+        function() { routeUserLoc = null; },
+        { timeout: 5000, maximumAge: 60000 }
+      );
+    }
+  };
+
+  window.routeCloseNav = function() {
+    document.getElementById('routeNavPage').classList.remove('show');
+    document.getElementById('routeHomeView').style.display = 'block';
+    document.getElementById('routeGenView').classList.remove('show');
+    document.getElementById('routeBottomBar').classList.remove('show');
+  };
+
+  window.routeToggleNavFav = function() {
+    routeNavFaved = !routeNavFaved;
+    let btn = document.getElementById('navFavBtn');
+    if (routeNavFaved) {
+      btn.textContent = '\u2665';
+      btn.classList.add('faved');
+    } else {
+      btn.textContent = '\u2661';
+      btn.classList.remove('faved');
+    }
+  };
+
+  window.routeShareRoute = function() {
+    let title = document.getElementById('navTitle').textContent;
+    let dur = document.getElementById('navDuration').textContent;
+    let cost = document.getElementById('navCost').textContent;
+    let stops = document.getElementById('navStops').textContent;
+    let shareText = title + ' - ' + stops + '站 · ' + dur + ' · ' + cost;
+    navigator.clipboard && navigator.clipboard.writeText(shareText);
+    document.getElementById('navShareAlert').querySelector('.nav-alert-text').textContent = '路线已复制到剪贴板：\n"' + shareText + '"';
+    document.getElementById('navShareAlert').classList.add('show');
+  };
+
+  window.routeCloseShareAlert = function() {
+    document.getElementById('navShareAlert').classList.remove('show');
+  };
+
+  // ====== 导航面板 ======
+  window.routeNavToHere = function(idx) {
+    if (!routeNavStops[idx]) return;
+    routeNavTargetIdx = idx;
+    // Highlight card
+    document.querySelectorAll('.route-nav-card').forEach((c, i) => {
+      if (i === idx) c.classList.add('fixed');
+      else c.classList.remove('fixed');
+    });
+    document.getElementById('navStartBtn').textContent = '继续导航前往 ' + routeNavStops[idx].title;
+    routeOpenNavSheet();
+  };
+
+  window.routeStartNav = function() {
+    routeNavTargetIdx = routeNavTargetIdx || 0;
+    if (!routeNavStops[routeNavTargetIdx]) return;
+    routeOpenNavSheet();
+  };
+
+  function routeOpenNavSheet() {
+    let stop = routeNavStops[routeNavTargetIdx];
+    if (!stop) return;
+
+    let dist = '';
+    if (routeUserLoc) {
+      let d = routeCalcDist(routeUserLoc.lat, routeUserLoc.lng, stop.lat, stop.lng);
+      dist = '约 ' + d + ' · 步行';
+    } else {
+      dist = '步行约 15 分钟';
+    }
+
+    document.getElementById('navSheetTitle').textContent = '前往 ' + stop.title;
+    document.getElementById('navSheetSubtitle').textContent = stop.location + ' · ' + dist;
+
+    // Build map options
+    let maps = routeGetMapOptions(stop);
+    document.getElementById('navSheetMaps').innerHTML = maps.map(m =>
+      '<div class="route-map-option" onclick="routeOpenMap(\'' + m.id + '\',' + routeNavTargetIdx + ')">' +
+        '<div class="map-icon ' + m.iconClass + '">' + m.icon + '</div>' +
+        '<div class="map-info">' +
+          '<div class="map-name">' + m.name + '</div>' +
+          '<div class="map-desc">' + m.desc + '</div>' +
+        '</div>' +
+        '<div class="map-arrow">&rarr;</div>' +
+      '</div>'
+    ).join('');
+
+    document.getElementById('routeNavSheet').classList.add('show');
+  }
+
+  window.routeCloseNavSheet = function() {
+    document.getElementById('routeNavSheet').classList.remove('show');
+  };
+
+  window.routeOpenMap = function(mapId, idx) {
+    let stop = routeNavStops[idx];
+    if (!stop) return;
+    let name = encodeURIComponent(stop.title);
+    let lat = stop.lat;
+    let lng = stop.lng;
+    let url = '';
+
+    switch (mapId) {
+      case 'amap':
+        // 高德地图：to=name,lon,lat
+        url = 'https://uri.amap.com/navigation?to=' + lng + ',' + lat + ',' + name + '&mode=walk&callnative=1';
+        if (routeUserLoc) url += '&from=' + routeUserLoc.lng + ',' + routeUserLoc.lat + ',我的位置';
+        break;
+      case 'baidu':
+        // 百度地图：需要 BD-09 坐标，这里做简单转换 (GCJ-02 → BD-09)
+        let bd = routeGCJ2BD(lat, lng);
+        url = 'https://api.map.baidu.com/direction?destination=name:' + name + '|latlng:' + bd.lat + ',' + bd.lng + '&coord_type=bd09ll&mode=walking&output=html&src=echoland';
+        if (routeUserLoc) {
+          let bdFrom = routeGCJ2BD(routeUserLoc.lat, routeUserLoc.lng);
+          url += '&origin=name:我的位置|latlng:' + bdFrom.lat + ',' + bdFrom.lng;
+        }
+        break;
+      case 'tencent':
+        url = 'https://apis.map.qq.com/uri/v1/routeplan?type=walk&to=' + name + '&tocoord=' + lat + ',' + lng + '&referer=echoland';
+        if (routeUserLoc) url += '&from=我的位置&fromcoord=' + routeUserLoc.lat + ',' + routeUserLoc.lng;
+        break;
+      case 'apple':
+        url = 'https://maps.apple.com/?daddr=' + lat + ',' + lng + '&dirflg=w';
+        if (routeUserLoc) url += '&saddr=' + routeUserLoc.lat + ',' + routeUserLoc.lng;
+        break;
+      case 'browser':
+        url = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '&travelmode=walking';
+        if (routeUserLoc) url += '&origin=' + routeUserLoc.lat + ',' + routeUserLoc.lng;
+        break;
+    }
+
+    if (url) {
+      let a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    routeCloseNavSheet();
+  };
+
+  // GCJ-02 → BD-09 坐标转换
+  function routeGCJ2BD(lat, lng) {
+    let x = lng, y = lat;
+    let z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * Math.PI * 3000.0 / 180.0);
+    let theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * Math.PI * 3000.0 / 180.0);
+    let bdLng = z * Math.cos(theta) + 0.0065;
+    let bdLat = z * Math.sin(theta) + 0.006;
+    return { lat: bdLat, lng: bdLng };
+  }
+
+  // 计算两点距离 (km)
+  function routeCalcDist(lat1, lng1, lat2, lng2) {
+    let R = 6371;
+    let dLat = (lat2 - lat1) * Math.PI / 180;
+    let dLng = (lng2 - lng1) * Math.PI / 180;
+    let a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+            Math.sin(dLng/2) * Math.sin(dLng/2);
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    let km = R * c;
+    return km < 1 ? Math.round(km * 1000) + 'm' : km.toFixed(1) + 'km';
+  }
+
+  // 获取地图选项（根据平台智能排序）
+  function routeGetMapOptions(stop) {
+    let ua = navigator.userAgent;
+    let isIOS = /iPhone|iPad|iPod/.test(ua);
+    let isAndroid = /Android/.test(ua);
+    let name = stop.title;
+
+    let all = [
+      { id: 'amap', name: '高德地图', desc: '路线规划、实时路况、步行导航', icon: '高', iconClass: 'amap' },
+      { id: 'baidu', name: '百度地图', desc: '智能路线、全景地图、步行导航', icon: 'B', iconClass: 'baidu' },
+      { id: 'tencent', name: '腾讯地图', desc: '微信生态、精准定位、步行导航', icon: 'T', iconClass: 'tencent' },
+      { id: 'apple', name: 'Apple 地图', desc: '系统原生、流畅体验', icon: 'M', iconClass: 'apple' },
+      { id: 'browser', name: '浏览器打开', desc: '无需安装 App，网页版地图', icon: 'W', iconClass: 'browser' }
+    ];
+
+    // 排序：iOS 优先 Apple → 高德 → 百度 → 腾讯 → 浏览器
+    // Android 优先 高德 → 百度 → 腾讯 → 浏览器
+    if (isIOS) {
+      return [all[3], all[0], all[1], all[2], all[4]];
+    } else if (isAndroid) {
+      return [all[0], all[1], all[2], all[4]];
+    }
+    // 桌面端（开发调试）：显示全部
+    return [all[3], all[0], all[1], all[2], all[4]];
+  };
+
+  // ====== COMMUNITY ======
+  function renderCommunityRoutes() {
+    let container = document.getElementById('routeCommunityCards');
+    container.innerHTML = COMMUNITY_ROUTES.map(r =>
+      '<div class="route-comm-card" onclick="routeUseCommunity(\'' + r.title + '\')">' +
+        '<div class="route-comm-cover ' + r.coverClass + '">' +
+          '<div class="cover-users">' + r.users + '</div>' +
+          '<div class="cover-title">' + r.title + '</div>' +
+        '</div>' +
+        '<div class="route-comm-body">' +
+          '<div class="route-comm-meta">' +
+            '<span>' + r.duration + '</span>' +
+            '<span>' + r.cost + '</span>' +
+            '<span>' + r.area + '</span>' +
+          '</div>' +
+          '<div class="route-comm-tags">' + r.tags.map(t => '<span>' + t + '</span>').join('') + '</div>' +
+          '<div class="route-comm-footer">' +
+            '<div class="route-comm-author"><div class="author-avatar">' + r.author.charAt(0) + '</div>' + r.author + '</div>' +
+            '<button class="route-comm-use-btn" onclick="event.stopPropagation();routeUseCommunity(\'' + r.title + '\')">用这条</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    ).join('');
+  }
+
+  window.routeUseCommunity = function(title) {
+    document.getElementById('routeNlInput').value = '参考路线：' + title;
+    document.getElementById('routeNlInput').scrollIntoView({ behavior: 'smooth' });
+    routeGenerate();
+  };
+
+  window.routeToggleCity = function() {
+    let cities = ['南京', '北京', '上海', '杭州', '成都'];
+    let el = document.querySelector('.route-city-name');
+    let cur = el.textContent.trim();
+    let idx = cities.indexOf(cur);
+    el.textContent = cities[(idx + 1) % cities.length];
+  };
+
+  routeInit();
+})();
+</script>

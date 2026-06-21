@@ -1,1 +1,1743 @@
+<section class="community-page" aria-label="回声地社区">
+  <style>
+    .community-page {
+      --community-pad: calc(18 * var(--u));
+      min-height: 100vh;
+      background: #080a0d;
+      color: #f5f5f5;
+    }
 
+    .community-page button,
+    .community-page textarea,
+    .community-page input {
+      font: inherit;
+    }
+
+    .community-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      display: grid;
+      grid-template-columns: calc(44 * var(--u)) 1fr calc(44 * var(--u));
+      align-items: center;
+      min-height: calc(72 * var(--u) + env(safe-area-inset-top));
+      padding: env(safe-area-inset-top) calc(12 * var(--u)) 0;
+      background: rgba(8, 10, 13, .92);
+      backdrop-filter: blur(calc(18 * var(--u)));
+    }
+
+    .community-icon-btn {
+      display: grid;
+      place-items: center;
+      width: calc(44 * var(--u));
+      height: calc(44 * var(--u));
+      padding: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: #f5f5f5;
+    }
+
+    .community-icon-btn:active,
+    .post-action:active,
+    .quick-compose:active {
+      background: rgba(255, 255, 255, .07);
+      transform: scale(.96);
+    }
+
+    .community-icon-btn svg,
+    .post-action svg,
+    .composer-tool svg,
+    .compact-icon svg {
+      width: calc(23 * var(--u));
+      height: calc(23 * var(--u));
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .community-wordmark {
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(148 * var(--u));
+      height: calc(44 * var(--u));
+      padding: 0;
+      background: transparent;
+    }
+
+    .community-wordmark img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .community-searchbar {
+      display: none;
+      gap: calc(10 * var(--u));
+      padding: calc(8 * var(--u)) var(--community-pad) calc(14 * var(--u));
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      background: #080a0d;
+    }
+
+    .community-searchbar.open {
+      display: flex;
+    }
+
+    .community-searchbar input {
+      flex: 1;
+      min-width: 0;
+      height: calc(42 * var(--u));
+      padding: 0 calc(15 * var(--u));
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: calc(14 * var(--u));
+      outline: 0;
+      background: #15181d;
+      color: #fff;
+      font-size: calc(15 * var(--u));
+    }
+
+    .community-searchbar button {
+      padding: 0;
+      background: transparent;
+      color: #aeb2b8;
+    }
+
+    .quick-compose {
+      display: grid;
+      grid-template-columns: calc(44 * var(--u)) minmax(0, 1fr) auto;
+      align-items: center;
+      gap: calc(12 * var(--u));
+      width: 100%;
+      min-height: calc(78 * var(--u));
+      padding: calc(14 * var(--u)) var(--community-pad);
+      border-bottom: 1px solid rgba(255, 255, 255, .09);
+      background: transparent;
+      color: inherit;
+      text-align: left;
+    }
+
+    .avatar {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: calc(44 * var(--u));
+      height: calc(44 * var(--u));
+      flex: 0 0 auto;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 50%;
+      background: linear-gradient(145deg, #363c45, #16191d);
+      color: #fff;
+      font-size: calc(13 * var(--u));
+      font-weight: 700;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .quick-compose-copy {
+      display: grid;
+      gap: calc(3 * var(--u));
+      color: #92979e;
+      font-size: calc(14 * var(--u));
+      line-height: 1.2;
+    }
+
+    .quick-compose-copy strong {
+      overflow: hidden;
+      color: #f1f1f1;
+      font-size: calc(14 * var(--u));
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .quick-compose-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: calc(56 * var(--u));
+      height: calc(34 * var(--u));
+      padding: 0 calc(14 * var(--u));
+      border: 1px solid rgba(255, 255, 255, .17);
+      border-radius: calc(17 * var(--u));
+      background: transparent;
+      color: #f5f5f5;
+      font-size: calc(13 * var(--u));
+      font-weight: 650;
+    }
+
+    .feed-filter {
+      display: flex;
+      gap: calc(26 * var(--u));
+      height: calc(48 * var(--u));
+      padding: 0 var(--community-pad);
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .feed-filter button {
+      position: relative;
+      padding: 0;
+      background: transparent;
+      color: #777c83;
+      font-size: calc(15 * var(--u));
+      font-weight: 650;
+    }
+
+    .feed-filter button.active {
+      color: #fff;
+    }
+
+    .feed-filter button.active::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: calc(3 * var(--u));
+      border-radius: calc(2 * var(--u));
+      background: var(--brand);
+      content: "";
+    }
+
+    .post-card {
+      display: grid;
+      grid-template-columns: calc(46 * var(--u)) minmax(0, 1fr);
+      gap: calc(10 * var(--u));
+      padding: calc(8 * var(--u)) var(--community-pad) calc(7 * var(--u));
+      border-bottom: 1px solid rgba(255, 255, 255, .09);
+    }
+
+    .post-avatar-rail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .post-thread-line {
+      width: calc(2 * var(--u));
+      min-height: calc(32 * var(--u));
+      flex: 1;
+      margin-top: calc(8 * var(--u));
+      border-radius: calc(2 * var(--u));
+      background: rgba(255, 255, 255, .15);
+    }
+
+    .post-main {
+      min-width: 0;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: calc(7 * var(--u));
+      min-height: calc(24 * var(--u));
+    }
+
+    .post-name {
+      min-width: 0;
+      overflow: hidden;
+      color: #f5f5f5;
+      font-size: calc(15 * var(--u));
+      font-weight: 720;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .post-time {
+      flex: 0 0 auto;
+      color: #797e85;
+      font-size: calc(14 * var(--u));
+    }
+
+    .post-more {
+      display: grid;
+      place-items: center;
+      width: calc(34 * var(--u));
+      height: calc(30 * var(--u));
+      margin-left: auto;
+      padding: 0;
+      background: transparent;
+      color: #8b9097;
+      font-size: calc(20 * var(--u));
+      letter-spacing: calc(2 * var(--u));
+    }
+
+    .post-content {
+      position: relative;
+      display: -webkit-box;
+      margin: calc(3 * var(--u)) 0 0;
+      overflow: hidden;
+      color: #eeeef0;
+      font-size: calc(16 * var(--u));
+      line-height: 1.45;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 6;
+    }
+
+    .post-content.expanded {
+      display: block;
+      overflow: visible;
+    }
+
+    .post-expand {
+      display: none;
+      margin: calc(3 * var(--u)) 0 0;
+      padding: 0;
+      background: transparent;
+      color: #8f949b;
+      font-size: calc(14 * var(--u));
+    }
+
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(5 * var(--u));
+      margin-top: calc(7 * var(--u));
+    }
+
+    .post-tag {
+      padding: calc(5 * var(--u)) calc(9 * var(--u));
+      border-radius: calc(16 * var(--u));
+      background: #1a1e1b;
+      color: #bdde91;
+      font-size: calc(12 * var(--u));
+    }
+
+    .post-media-grid {
+      display: grid;
+      gap: calc(3 * var(--u));
+      margin-top: calc(8 * var(--u));
+      overflow: hidden;
+      border-radius: calc(13 * var(--u));
+    }
+
+    .post-media-grid.count-1 { grid-template-columns: 1fr; }
+
+    .post-media-grid:not(.count-1) {
+      display: flex;
+      gap: calc(6 * var(--u));
+      overflow-x: auto;
+      overflow-y: hidden;
+      border-radius: 0;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .post-media-grid:not(.count-1)::-webkit-scrollbar {
+      display: none;
+    }
+
+    .post-media-grid:not(.count-1) .post-media {
+      min-height: 0;
+      flex: 0 0 calc(100% - 24 * var(--u));
+      aspect-ratio: 4 / 3;
+      border-radius: calc(12 * var(--u));
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    .post-media-grid:not(.count-1) .post-media img {
+      border-radius: calc(12 * var(--u));
+    }
+
+    .post-media {
+      position: relative;
+      min-height: calc(134 * var(--u));
+      overflow: hidden;
+      border: 0;
+      background: #171b20;
+    }
+
+    .count-1 .post-media {
+      min-height: calc(230 * var(--u));
+      max-height: calc(310 * var(--u));
+    }
+
+    .post-media img {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      object-fit: cover;
+    }
+
+    .count-1 .post-media.contain-image {
+      min-height: 0;
+      max-height: none;
+      background: #f5f5f3;
+    }
+
+    .post-media.contain-image img {
+      display: block;
+      height: auto;
+      min-height: 0;
+      object-fit: contain;
+    }
+
+    .mock-media {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      padding: calc(14 * var(--u));
+      color: rgba(255, 255, 255, .82);
+      font-size: calc(12 * var(--u));
+      letter-spacing: calc(.6 * var(--u));
+    }
+
+    .mock-night-1 { background: radial-gradient(circle at 75% 18%, #d9d36e 0 1%, transparent 2%), linear-gradient(150deg, #111921 0 45%, #302b22 46% 54%, #080b0f 55%); }
+    .mock-night-2 { background: radial-gradient(circle at 60% 32%, #b6e0fa 0 2%, transparent 3%), linear-gradient(160deg, #0c1119 0 40%, #28323b 41% 50%, #0a0d10 51%); }
+    .mock-night-3 { background: linear-gradient(170deg, #141b2b 0 45%, #3d4955 46% 48%, #07090c 49%); }
+    .mock-river { background: radial-gradient(ellipse at 50% 78%, #95a98b 0 3%, transparent 4%), linear-gradient(175deg, #1c2b34 0 48%, #536e76 49% 60%, #0f171b 61%); }
+    .mock-stone { background: linear-gradient(145deg, #2f382f 0 32%, #76735f 33% 66%, #1b211c 67%); }
+    .mock-quote {
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
+      background: #f3f3ef;
+      color: #24272b;
+      font-size: calc(14 * var(--u));
+      line-height: 1.6;
+    }
+
+    .mock-quote strong { font-size: calc(18 * var(--u)); }
+
+    .attachment-card {
+      display: flex;
+      align-items: center;
+      gap: calc(9 * var(--u));
+      width: 100%;
+      margin-top: calc(8 * var(--u));
+      padding: calc(10 * var(--u));
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: calc(13 * var(--u));
+      background: #13171b;
+      color: inherit;
+      text-align: left;
+    }
+
+    .attachment-card.activity-card {
+      align-items: flex-start;
+      width: calc(100% + 12 * var(--u));
+      margin-left: calc(-6 * var(--u));
+    }
+
+    .attachment-card.location-card .attachment-copy {
+      display: flex;
+      align-items: center;
+      gap: calc(7 * var(--u));
+      flex-wrap: wrap;
+    }
+
+    .attachment-card.location-card .attachment-sub {
+      margin-top: 0;
+    }
+
+    .attachment-icon {
+      display: grid;
+      place-items: center;
+      width: calc(34 * var(--u));
+      height: calc(34 * var(--u));
+      flex: 0 0 auto;
+      border-radius: calc(10 * var(--u));
+      background: #20251f;
+      color: var(--brand);
+      font-size: calc(17 * var(--u));
+    }
+
+    .attachment-copy { min-width: 0; }
+    .attachment-title {
+      overflow: hidden;
+      color: #eee;
+      font-size: calc(14 * var(--u));
+      font-weight: 650;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .activity-card .attachment-title,
+    .activity-option .sheet-option-title {
+      display: block;
+      overflow: visible;
+      line-height: 1.45;
+      text-overflow: clip;
+      white-space: normal;
+    }
+
+    .attachment-sub {
+      margin-top: calc(2 * var(--u));
+      overflow: hidden;
+      color: #8e949b;
+      font-size: calc(12 * var(--u));
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .activity-card .attachment-sub,
+    .activity-option .sheet-option-sub {
+      display: block;
+      overflow: visible;
+      white-space: normal;
+    }
+
+    .attachment-sub-line {
+      display: inline;
+      line-height: 1.45;
+    }
+    .attachment-sub-divider {
+      display: inline-block;
+      width: 1px;
+      height: calc(10 * var(--u));
+      margin: 0 calc(6 * var(--u));
+      background: rgba(255, 255, 255, .2);
+      vertical-align: middle;
+    }
+
+    .map-point-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: calc(4 * var(--u));
+      margin-left: auto;
+      padding: calc(4 * var(--u)) calc(7 * var(--u));
+      border-radius: calc(10 * var(--u));
+      background: rgba(168, 255, 61, .12);
+      color: var(--brand);
+      font-size: calc(10 * var(--u));
+      white-space: nowrap;
+    }
+
+    .echo-point-mark {
+      display: grid;
+      place-items: center;
+      width: calc(16 * var(--u));
+      height: calc(16 * var(--u));
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      font-size: calc(8 * var(--u));
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .post-actions {
+      display: flex;
+      align-items: center;
+      gap: calc(10 * var(--u));
+      margin-top: calc(7 * var(--u));
+    }
+
+    .post-action {
+      display: inline-flex;
+      align-items: center;
+      gap: calc(4 * var(--u));
+      min-width: 0;
+      min-height: calc(30 * var(--u));
+      padding: 0 calc(2 * var(--u));
+      border-radius: calc(8 * var(--u));
+      background: transparent;
+      color: #aeb3ba;
+      font-size: calc(13 * var(--u));
+    }
+
+    .post-action svg {
+      width: calc(18 * var(--u));
+      height: calc(18 * var(--u));
+    }
+
+    .post-action[data-action="comment"] svg,
+    .post-action[data-action="repost"] svg,
+    .post-action[data-action="share"] svg,
+    .post-action[data-reply-action="comment"] svg,
+    .post-action[data-reply-action="repost"] svg,
+    .post-action[data-reply-action="share"] svg {
+      width: calc(19 * var(--u));
+      height: calc(19 * var(--u));
+    }
+
+    .post-action span {
+      font-size: calc(13 * var(--u));
+      line-height: 1;
+    }
+
+    .post-action.liked {
+      color: #ff4058;
+    }
+
+    .post-action.liked svg {
+      fill: currentColor;
+      stroke: currentColor;
+    }
+
+    .thread-reply {
+      display: grid;
+      grid-template-columns: calc(46 * var(--u)) minmax(0, 1fr);
+      gap: calc(10 * var(--u));
+      margin-top: calc(3 * var(--u));
+      margin-left: calc(-56 * var(--u));
+      padding-top: calc(2 * var(--u));
+    }
+
+    .thread-reply-main {
+      min-width: 0;
+    }
+
+    .thread-reply-avatar {
+      position: relative;
+      z-index: 2;
+    }
+
+    .thread-reply-avatar::after {
+      position: absolute;
+      top: calc(44 * var(--u));
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: -1;
+      background: #080a0d;
+      content: "";
+    }
+
+    .thread-reply .post-meta {
+      min-height: calc(24 * var(--u));
+    }
+
+    .thread-reply-content {
+      margin: calc(3 * var(--u)) 0 0;
+      color: #eeeef0;
+      font-size: calc(15 * var(--u));
+      line-height: 1.45;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .thread-reply .post-actions {
+      margin-top: calc(4 * var(--u));
+    }
+
+    .feed-empty {
+      display: none;
+      padding: calc(86 * var(--u)) calc(30 * var(--u));
+      color: #8c9198;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .feed-empty strong {
+      display: block;
+      color: #f1f1f1;
+      font-size: calc(18 * var(--u));
+    }
+
+    .feed-empty button {
+      margin-top: calc(18 * var(--u));
+      padding: calc(10 * var(--u)) calc(18 * var(--u));
+      border-radius: calc(20 * var(--u));
+      background: var(--brand);
+      color: #0b0d09;
+      font-weight: 700;
+    }
+
+    .floating-compose {
+      position: fixed;
+      right: max(calc((100vw - min(100vw, calc(430 * var(--u)))) / 2 + 18 * var(--u)), calc(18 * var(--u)));
+      bottom: calc(102 * var(--u) + env(safe-area-inset-bottom));
+      z-index: 15;
+      display: grid;
+      place-items: center;
+      width: calc(58 * var(--u));
+      height: calc(58 * var(--u));
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 50%;
+      background: #171a1f;
+      box-shadow: 0 calc(8 * var(--u)) calc(26 * var(--u)) rgba(0, 0, 0, .42);
+      color: #fff;
+      font-size: calc(34 * var(--u));
+      font-weight: 250;
+    }
+
+    .community-compose,
+    .community-preview {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      z-index: 60;
+      display: none;
+      width: min(100vw, calc(430 * var(--u)));
+      height: 100dvh;
+      overflow: hidden;
+      background: #080a0d;
+      transform: translateX(-50%);
+    }
+
+    .community-compose.open,
+    .community-preview.open {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .compose-topbar {
+      display: grid;
+      grid-template-columns: calc(72 * var(--u)) 1fr calc(72 * var(--u));
+      align-items: center;
+      min-height: calc(62 * var(--u) + env(safe-area-inset-top));
+      padding: env(safe-area-inset-top) calc(14 * var(--u)) 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .compose-topbar button {
+      padding: 0;
+      background: transparent;
+      color: #e8e8e8;
+      font-size: calc(15 * var(--u));
+    }
+
+    .compose-topbar h2 {
+      margin: 0;
+      text-align: center;
+      font-size: calc(16 * var(--u));
+    }
+
+    .compose-publish {
+      justify-self: end;
+      min-width: calc(58 * var(--u));
+      height: calc(34 * var(--u));
+      border-radius: calc(17 * var(--u));
+      background: var(--brand) !important;
+      color: #0b0d09 !important;
+      font-weight: 750 !important;
+    }
+
+    .compose-publish:disabled {
+      background: #25292f !important;
+      color: #686d74 !important;
+      cursor: default;
+    }
+
+    .compose-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: calc(18 * var(--u));
+    }
+
+    .compose-editor {
+      display: grid;
+      grid-template-columns: calc(44 * var(--u)) minmax(0, 1fr);
+      gap: calc(12 * var(--u));
+    }
+
+    .compose-name {
+      margin: calc(2 * var(--u)) 0 calc(8 * var(--u));
+      font-size: calc(15 * var(--u));
+      font-weight: 700;
+    }
+
+    .compose-textarea {
+      width: 100%;
+      min-height: calc(142 * var(--u));
+      padding: 0;
+      resize: none;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #f4f4f4;
+      font-size: calc(17 * var(--u));
+      line-height: 1.55;
+    }
+
+    .compose-textarea::placeholder { color: #777c83; }
+
+    .compose-selection-list {
+      display: grid;
+      gap: calc(8 * var(--u));
+      margin-top: calc(8 * var(--u));
+    }
+
+    .compose-selection {
+      display: flex;
+      align-items: center;
+      gap: calc(8 * var(--u));
+      padding: calc(9 * var(--u)) calc(11 * var(--u));
+      border-radius: calc(11 * var(--u));
+      background: #171b20;
+      color: #dfe2e5;
+      font-size: calc(13 * var(--u));
+    }
+
+    .compose-selection button {
+      margin-left: auto;
+      padding: 0;
+      background: transparent;
+      color: #8f949a;
+      font-size: calc(20 * var(--u));
+    }
+
+    .compose-images {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: calc(6 * var(--u));
+      margin-top: calc(12 * var(--u));
+    }
+
+    .compose-image {
+      position: relative;
+      aspect-ratio: 1 / .78;
+      overflow: hidden;
+      border-radius: calc(12 * var(--u));
+      background: #171b20;
+    }
+
+    .compose-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .compose-image button {
+      position: absolute;
+      top: calc(7 * var(--u));
+      right: calc(7 * var(--u));
+      display: grid;
+      place-items: center;
+      width: calc(25 * var(--u));
+      height: calc(25 * var(--u));
+      padding: 0;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, .7);
+      color: #fff;
+    }
+
+    .compose-footer {
+      flex: 0 0 auto;
+      border-top: 1px solid rgba(255, 255, 255, .09);
+      background: rgba(8, 10, 13, .98);
+    }
+
+    .compose-count-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: calc(12 * var(--u));
+      min-height: calc(24 * var(--u));
+      padding: calc(6 * var(--u)) calc(16 * var(--u)) 0;
+      color: #737980;
+      font-size: calc(12 * var(--u));
+    }
+
+    .compose-hint.error { color: #ff7d89; }
+
+    .compose-toolbar {
+      display: flex;
+      align-items: center;
+      gap: calc(6 * var(--u));
+      padding: calc(4 * var(--u)) calc(14 * var(--u)) calc(12 * var(--u) + env(safe-area-inset-bottom));
+    }
+
+    .composer-tool {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(5 * var(--u));
+      min-width: calc(44 * var(--u));
+      height: calc(42 * var(--u));
+      padding: 0 calc(9 * var(--u));
+      border-radius: calc(13 * var(--u));
+      background: transparent;
+      color: #b1b6bd;
+      font-size: calc(12 * var(--u));
+    }
+
+    .composer-tool.active {
+      background: rgba(168, 255, 61, .1);
+      color: var(--brand);
+    }
+
+    .map-switch-row {
+      display: flex;
+      align-items: center;
+      gap: calc(8 * var(--u));
+      margin-left: auto;
+      color: #b1b6bd;
+      font-size: calc(12 * var(--u));
+      white-space: nowrap;
+    }
+
+    .map-switch {
+      position: relative;
+      width: calc(42 * var(--u));
+      height: calc(24 * var(--u));
+      padding: 0;
+      border-radius: calc(13 * var(--u));
+      background: #343941;
+    }
+
+    .map-switch::after {
+      position: absolute;
+      top: calc(3 * var(--u));
+      left: calc(3 * var(--u));
+      width: calc(18 * var(--u));
+      height: calc(18 * var(--u));
+      border-radius: 50%;
+      background: #fff;
+      transition: transform .18s ease;
+      content: "";
+    }
+
+    .map-switch.on {
+      background: var(--brand);
+    }
+
+    .map-switch.on::after {
+      transform: translateX(calc(18 * var(--u)));
+    }
+
+    .community-sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(0, 0, 0, .62);
+    }
+
+    .community-sheet-backdrop.open { display: flex; }
+
+    .community-sheet {
+      width: min(100vw, calc(430 * var(--u)));
+      max-height: 72dvh;
+      overflow-y: auto;
+      padding: calc(10 * var(--u)) calc(16 * var(--u)) calc(18 * var(--u) + env(safe-area-inset-bottom));
+      border-radius: calc(22 * var(--u)) calc(22 * var(--u)) 0 0;
+      background: #171a1f;
+      box-shadow: 0 calc(-8 * var(--u)) calc(30 * var(--u)) rgba(0, 0, 0, .35);
+    }
+
+    .sheet-handle {
+      width: calc(38 * var(--u));
+      height: calc(4 * var(--u));
+      margin: 0 auto calc(14 * var(--u));
+      border-radius: calc(3 * var(--u));
+      background: #50555d;
+    }
+
+    .community-sheet h3 {
+      margin: 0 0 calc(12 * var(--u));
+      font-size: calc(17 * var(--u));
+    }
+
+    .community-sheet.activity-picker-sheet {
+      display: flex;
+      flex-direction: column;
+      height: 70dvh;
+      max-height: 70dvh;
+      overflow: hidden;
+    }
+
+    .activity-search-wrap {
+      position: relative;
+      flex: 0 0 auto;
+      margin-bottom: calc(18 * var(--u));
+    }
+
+    .activity-search-wrap svg {
+      position: absolute;
+      top: 50%;
+      left: calc(13 * var(--u));
+      width: calc(19 * var(--u));
+      height: calc(19 * var(--u));
+      fill: none;
+      stroke: #7e848c;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .activity-search-input {
+      width: 100%;
+      height: calc(46 * var(--u));
+      padding: 0 calc(14 * var(--u)) 0 calc(42 * var(--u));
+      border: 1px solid rgba(255, 255, 255, .09);
+      border-radius: calc(14 * var(--u));
+      outline: 0;
+      background: #0d1014;
+      color: #f4f4f4;
+      font-size: calc(15 * var(--u));
+    }
+
+    .activity-search-input:focus {
+      border-color: rgba(168, 255, 61, .54);
+      box-shadow: 0 0 0 calc(3 * var(--u)) rgba(168, 255, 61, .08);
+    }
+
+    .activity-search-input::placeholder { color: #747a82; }
+
+    .activity-sug-label {
+      flex: 0 0 auto;
+      margin-bottom: calc(4 * var(--u));
+      color: #777d85;
+      font-size: calc(12 * var(--u));
+      font-weight: 650;
+    }
+
+    .activity-sug-list {
+      min-height: 0;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .activity-sug-empty {
+      padding: calc(52 * var(--u)) 0;
+      color: #777d85;
+      text-align: center;
+      font-size: calc(14 * var(--u));
+    }
+
+    .sheet-option {
+      display: flex;
+      align-items: center;
+      gap: calc(12 * var(--u));
+      width: 100%;
+      min-height: calc(56 * var(--u));
+      padding: calc(10 * var(--u)) 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      background: transparent;
+      color: #ececec;
+      text-align: left;
+    }
+
+    .sheet-option:last-child { border-bottom: 0; }
+    .sheet-option-copy { min-width: 0; }
+    .sheet-option-title { font-size: calc(15 * var(--u)); font-weight: 620; }
+    .sheet-option-sub { margin-top: calc(4 * var(--u)); color: #858a91; font-size: calc(12 * var(--u)); }
+    .sheet-option.danger { color: #ff6574; }
+
+    .community-toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(102 * var(--u) + env(safe-area-inset-bottom));
+      z-index: 120;
+      padding: calc(10 * var(--u)) calc(16 * var(--u));
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: calc(18 * var(--u));
+      background: rgba(38, 42, 48, .96);
+      color: #f2f2f2;
+      font-size: calc(13 * var(--u));
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, calc(12 * var(--u)));
+      transition: opacity .2s ease, transform .2s ease;
+      white-space: nowrap;
+    }
+
+    .community-toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .community-preview {
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: calc(58 * var(--u)) calc(14 * var(--u));
+      background: rgba(0, 0, 0, .96);
+    }
+
+    .community-preview img {
+      max-width: 100%;
+      max-height: 82dvh;
+      object-fit: contain;
+    }
+
+    .preview-close {
+      position: absolute;
+      top: calc(14 * var(--u) + env(safe-area-inset-top));
+      right: calc(14 * var(--u));
+      display: grid;
+      place-items: center;
+      width: calc(40 * var(--u));
+      height: calc(40 * var(--u));
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .1);
+      color: #fff;
+      font-size: calc(24 * var(--u));
+    }
+  </style>
+
+  <header class="community-topbar">
+    <button class="community-icon-btn" id="community-menu" type="button" aria-label="菜单"></button>
+    <button class="community-wordmark" id="community-logo" type="button" aria-label="刷新社区"><img src="assets/icons/community-logo.png" alt="Echoland 回声地"></button>
+    <button class="community-icon-btn" id="community-search" type="button" aria-label="搜索"></button>
+  </header>
+
+  <div class="community-searchbar" id="community-searchbar">
+    <input id="community-search-input" type="search" placeholder="搜索动态或用户" autocomplete="off">
+    <button id="community-search-cancel" type="button">取消</button>
+  </div>
+
+  <button class="quick-compose" id="quick-compose" type="button">
+    <span class="avatar"><img src="assets/community/avatar-current.jpg" alt="the__paramecia"></span>
+    <span class="quick-compose-copy"><strong>the__paramecia</strong><span>有什么新鲜事吗？</span></span>
+    <span class="quick-compose-action">发布</span>
+  </button>
+
+  <nav class="feed-filter" aria-label="信息流筛选">
+    <button class="active" type="button" data-filter="recommended">推荐</button>
+    <button type="button" data-filter="following">关注</button>
+    <button type="button" data-filter="latest">最新</button>
+  </nav>
+
+  <div id="community-feed" aria-live="polite"></div>
+  <div class="feed-empty" id="community-empty">
+    <strong>还没有人说话。</strong>
+    先留下一句也行。
+    <button type="button" data-open-compose>发一条</button>
+  </div>
+
+  <button class="floating-compose" type="button" data-open-compose aria-label="发布动态">＋</button>
+
+  <section class="community-compose" id="community-compose-page" aria-label="新建动态">
+    <header class="compose-topbar">
+      <button id="compose-cancel" type="button">取消</button>
+      <h2>新建动态</h2>
+      <button class="compose-publish" id="compose-publish" type="button" disabled>发布</button>
+    </header>
+
+    <div class="compose-body">
+      <div class="compose-editor">
+        <span class="avatar"><img src="assets/community/avatar-current.jpg" alt="the__paramecia"></span>
+        <div>
+          <div class="compose-name">the__paramecia</div>
+          <textarea class="compose-textarea" id="compose-text" maxlength="300" placeholder="写一句就行。"></textarea>
+          <div class="compose-images" id="compose-images"></div>
+          <div class="compose-selection-list" id="compose-selections"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="compose-footer">
+      <div class="compose-count-row"><span class="compose-hint" id="compose-hint"></span><span id="compose-count">0 / 300</span></div>
+      <div class="compose-toolbar">
+        <input id="compose-file" type="file" accept="image/*" multiple hidden>
+        <button class="composer-tool" id="compose-add-image" type="button" aria-label="添加图片"></button>
+        <button class="composer-tool" id="compose-add-location" type="button" aria-label="带上地点"></button>
+        <button class="composer-tool" id="compose-add-activity" type="button" aria-label="带上活动"></button>
+        <span class="map-switch-row">echo点 <button class="map-switch" id="compose-map-switch" type="button" role="switch" aria-checked="false" aria-label="设为echo点"></button></span>
+      </div>
+    </footer>
+  </section>
+
+  <div class="community-sheet-backdrop" id="community-sheet-backdrop">
+    <div class="community-sheet" id="community-sheet" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <div class="community-preview" id="community-preview" role="dialog" aria-modal="true">
+    <button class="preview-close" id="preview-close" type="button" aria-label="关闭">×</button>
+    <img id="preview-image" alt="动态图片预览">
+  </div>
+
+  <div class="community-toast" id="community-toast" role="status"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = 'echoland_posts';
+      const currentAvatar = 'assets/community/avatar-current.jpg';
+      const currentUsername = 'the__paramecia';
+      const iconPaths = {
+        menu: '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h12M4 17h16"/></svg>',
+        search: '<svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>',
+        heart: '<svg viewBox="0 0 24 24"><path d="M20.8 5.8c-2.2-2.2-5.7-2.2-7.8 0L12 6.9l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 22l7.8-7.3 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg>',
+        comment: '<svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.7 9.7 0 0 1-4-.9L3 21l1.6-4.4A8.5 8.5 0 1 1 21 11.5Z"/></svg>',
+        repost: '<svg viewBox="0 0 24 24"><path d="m17 2 4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
+        share: '<svg viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M22 2 11 13"/></svg>',
+        image: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 3-3 5 5"/></svg>',
+        location: '<svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+        ticket: '<svg viewBox="0 0 24 24"><path d="M3 8a3 3 0 0 0 0 6v4h18v-4a3 3 0 0 0 0-6V4H3v4Z"/><path d="M9 4v14"/></svg>'
+      };
+
+      const demoLocations = [
+        { id: 'loc_jiuxiang_river', name: '九乡河小水堤', address: '距你 800m' },
+        { id: 'loc_southern_dynasty_stone', name: '南朝石刻群', address: '萧宏石刻公园 · 距你约5km' },
+        { id: 'loc_jiuxiao_mengtiandi', name: '仙林九霄梦天地', address: '仙林中心' },
+        { id: 'loc_school_nearby', name: '学校附近', address: '当前位置附近' }
+      ];
+
+      const demoActivities = [
+        { id: 'evt_chen_jieli_2026', title: '陈洁丽《你happy我也happy》2026动漫歌演唱会 · 南京站', time: '2026年3月14日 20:00', venue: '1701Live House Max' },
+        { id: 'evt_shan_he_gu_ren_10', title: '《山河故人》十周年重映 · 贾樟柯南京路演', time: '12/14（日）16:25', venue: '仙林九霄梦天地星轶上影影城' }
+      ];
+
+      const mockPosts = [
+        {
+          id: 'mock_chenjieli_partner', username: currentUsername, avatar: currentAvatar, timeLabel: '2 分钟',
+          content: '童年女神来南京演出了，有没有搭子一起去的。',
+          images: ['assets/community/post-chenjieli-partner.jpg'], likes: 18, comments: 7, reposts: 2, activity: demoActivities[0]
+        },
+        {
+          id: 'mock_alyce', username: 'alycewang', avatar: 'assets/community/avatar-alyce.jpg', timeLabel: '10 小时',
+          content: '刷到条曲曲的视频，说大家说话要有服务感，高赞评论😂', images: ['assets/community/post-alyce-service.jpg'], imageFit: 'contain',
+          likes: 22, comments: 3, reposts: 0
+        },
+        {
+          id: 'mock_xiaoye', username: '小野同学', avatar: 'assets/community/avatar-xiaoye.jpg', timeLabel: '5 小时',
+          content: '周五想找个 livehouse 听点不吵闹的独立乐队，有人有推荐吗？预算人均 100 左右就好～\n最好在地铁沿线！',
+          tags: ['求推荐', '独立音乐', 'livehouse'], likes: 67, comments: 38, reposts: 2,
+          reply: {
+            username: '闹北', avatar: 'assets/community/avatar-naobei.jpg', timeLabel: '4 小时',
+            content: 'LOOPY 不错，隔音也好，地铁能到', likes: 18, comments: 1, reposts: 0
+          }
+        },
+        {
+          id: 'mock_cecilia', username: 'cecilia_aaaaaazz', avatar: 'assets/community/avatar-cecilia.jpg', timeLabel: '21 分钟',
+          content: '我现在特别想和熟悉的人在上海梧桐区的街道散步', likes: 10, comments: 2, reposts: 0
+        },
+        {
+          id: 'mock_river', username: currentUsername, avatar: currentAvatar, timeLabel: '昨天',
+          content: '和园旁边有个小水堤，好漂亮，感觉不像仙林了。站在堤上看着水流，好治愈。',
+          images: ['assets/community/post-river-1.jpg', 'assets/community/post-river-2.jpg'], likes: 42, comments: 8, reposts: 3, location: demoLocations[0], isMapPoint: true
+        },
+        {
+          id: 'mock_stone', username: '阿紫在拍照', avatar: 'assets/community/avatar-azi.jpg', timeLabel: '8 小时',
+          content: '难以置信...学校旁边有个 1000 多年的南朝石刻，和它对视，我觉得我对永恒这个概念有了更深的理解。',
+          images: ['assets/community/post-stone-1.jpg', 'assets/community/post-stone-2.jpg'], likes: 201, comments: 56, reposts: 23, location: demoLocations[1], isMapPoint: true
+        },
+        {
+          id: 'mock_movie', username: '电影拾荒者', avatar: 'assets/community/avatar-movie.jpg', timeLabel: '12 小时',
+          content: '在抖音刷了无数遍 Go West，今天才发现它原来离我这么近。',
+          likes: 89, comments: 14, reposts: 6, activity: demoActivities[1]
+        },
+        {
+          id: 'mock_jenny', username: 'jenyuri_o3', avatar: 'assets/community/avatar-jenyuri.jpg', timeLabel: '5 小时',
+          content: '我真的打心底里惧怕卡式炉这个东西，进了一家店看到这个我都想直接退出去不吃了那种……',
+          likes: 266, comments: 28, reposts: 0
+        },
+        {
+          id: 'mock_uncle', username: 'uncle_jack1987', avatar: 'assets/community/avatar-uncle.jpg', timeLabel: '8 小时',
+          content: '大家是怎么从这里离开的，我已经困了三天了。', likes: 17000, comments: 58, reposts: 53
+        }
+      ];
+
+      const state = {
+        savedPosts: readSavedPosts(),
+        filter: 'recommended',
+        query: '',
+        compose: { content: '', images: [], location: null, activity: null, isMapPoint: false },
+        selectedPostId: null,
+        toastTimer: null
+      };
+
+      const feedEl = document.getElementById('community-feed');
+      const emptyEl = document.getElementById('community-empty');
+      const composePage = document.getElementById('community-compose-page');
+      const composeText = document.getElementById('compose-text');
+      const composePublish = document.getElementById('compose-publish');
+      const composeHint = document.getElementById('compose-hint');
+      const composeCount = document.getElementById('compose-count');
+      const composeImages = document.getElementById('compose-images');
+      const composeSelections = document.getElementById('compose-selections');
+      const sheetBackdrop = document.getElementById('community-sheet-backdrop');
+      const sheet = document.getElementById('community-sheet');
+      const toastEl = document.getElementById('community-toast');
+
+      document.getElementById('community-menu').innerHTML = iconPaths.menu;
+      document.getElementById('community-search').innerHTML = iconPaths.search;
+      document.getElementById('compose-add-image').innerHTML = iconPaths.image;
+      document.getElementById('compose-add-location').innerHTML = iconPaths.location;
+      document.getElementById('compose-add-activity').innerHTML = iconPaths.ticket;
+
+      function readSavedPosts() {
+        try {
+          const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          return Array.isArray(value) ? value.map(post => {
+            const latestActivity = post.activity ? demoActivities.find(activity => activity.id === post.activity.id) : null;
+            const latestLocation = post.location ? demoLocations.find(location => location.id === post.location.id) : null;
+            return {
+              ...post,
+              ...(post.userId === 'user_current' ? { username: currentUsername, avatar: currentAvatar } : {}),
+              ...(latestActivity ? { activity: latestActivity } : {}),
+              ...(latestLocation ? { location: latestLocation } : {})
+            };
+          }) : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function escapeHTML(value) {
+        return String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+      }
+
+      function activityTitleHTML(activity) {
+        if (activity.id === 'evt_chen_jieli_2026') return '陈洁丽<br>《你happy我也happy》<br>2026动漫歌演唱会';
+        if (activity.id === 'evt_shan_he_gu_ren_10') return '贾樟柯《山河故人》<br>十周年重映';
+        return escapeHTML(activity.title).replace(' · ', '<br>');
+      }
+
+      function activityMetaHTML(activity) {
+        return [activity.time, activity.venue].filter(Boolean).map(item => `<span class="attachment-sub-line">${escapeHTML(item)}</span>`).join('<span class="attachment-sub-divider"></span>');
+      }
+
+      function formatCount(value) {
+        const count = Number(value || 0);
+        if (count >= 10000) return `${(count / 10000).toFixed(count >= 100000 ? 0 : 1).replace('.0', '')}万`;
+        return count ? count.toLocaleString('zh-CN') : '';
+      }
+
+      function formatTime(createdAt) {
+        if (!createdAt) return '刚刚';
+        const delta = Date.now() - new Date(createdAt).getTime();
+        if (delta < 60000) return '刚刚';
+        if (delta < 3600000) return `${Math.floor(delta / 60000)} 分钟`;
+        if (delta < 86400000) return `${Math.floor(delta / 3600000)} 小时`;
+        return `${Math.floor(delta / 86400000)} 天`;
+      }
+
+      function avatarHTML(post) {
+        if (post.avatar) return `<span class="avatar"><img src="${escapeHTML(post.avatar)}" alt="${escapeHTML(post.username)}"></span>`;
+        const hue = [...post.username].reduce((sum, char) => sum + char.charCodeAt(0), 0) % 360;
+        return `<span class="avatar" style="background:linear-gradient(145deg,hsl(${hue} 35% 42%),hsl(${hue + 28} 30% 18%))">${escapeHTML(post.initials || post.username.slice(0, 1).toUpperCase())}</span>`;
+      }
+
+      function mediaHTML(post) {
+        const images = Array.isArray(post.images) ? post.images : [];
+        const media = images.length ? images : (post.media || []);
+        if (!media.length) return '';
+        const count = Math.min(media.length, 4);
+        return `<div class="post-media-grid count-${count}">${media.slice(0, 4).map((item, index) => {
+          if (images.length) {
+            return `<button class="post-media${post.imageFit === 'contain' ? ' contain-image' : ''}" type="button" data-preview-src="${escapeHTML(item)}" aria-label="查看第 ${index + 1} 张图片"><img src="${escapeHTML(item)}" alt="动态图片 ${index + 1}"></button>`;
+          }
+          const mockContent = item === 'quote'
+            ? '<div class="mock-media mock-quote"><strong>大家都在搜：说话声音有服务感</strong><span>“行吧，最近这两年经济不好，刷到啥就学啥吧。”</span></div>'
+            : `<div class="mock-media mock-${escapeHTML(item)}">${item.includes('night') ? '南京 · 夜行记录' : item === 'river' ? '九乡河的水声' : '南朝石刻群'}</div>`;
+          return `<div class="post-media">${mockContent}</div>`;
+        }).join('')}</div>`;
+      }
+
+      function attachmentHTML(post) {
+        let html = '';
+        if (post.location) {
+          html += `<button class="attachment-card location-card" type="button" data-location-id="${escapeHTML(post.location.id)}">
+            <span class="attachment-icon">⌖</span><span class="attachment-copy"><span class="attachment-title">${escapeHTML(post.location.name)}</span><span class="attachment-sub">${escapeHTML(post.location.address || '查看地图位置')}</span></span>
+            ${post.isMapPoint ? '<span class="map-point-badge"><span class="echo-point-mark">e</span>echo点</span>' : ''}
+          </button>`;
+        }
+        if (post.activity) {
+          html += `<button class="attachment-card activity-card" type="button" data-activity-id="${escapeHTML(post.activity.id)}">
+            <span class="attachment-icon">票</span><span class="attachment-copy"><span class="attachment-title">${activityTitleHTML(post.activity)}</span><span class="attachment-sub">${activityMetaHTML(post.activity)}</span></span>
+          </button>`;
+        }
+        return html;
+      }
+
+      function replyHTML(reply) {
+        if (!reply) return '';
+        const normalized = typeof reply === 'string'
+          ? { username: reply.includes('：') ? reply.split('：')[0] : currentUsername, content: reply.includes('：') ? reply.split('：').slice(1).join('：') : reply, avatar: currentAvatar, timeLabel: '刚刚', likes: 0, comments: 0, reposts: 0 }
+          : reply;
+        return `<section class="thread-reply" aria-label="${escapeHTML(normalized.username)} 的回复">
+          <div class="thread-reply-avatar">${avatarHTML(normalized)}</div>
+          <div class="thread-reply-main">
+            <header class="post-meta"><span class="post-name">${escapeHTML(normalized.username)}</span><time class="post-time">${escapeHTML(normalized.timeLabel || formatTime(normalized.createdAt))}</time><button class="post-more" type="button" data-reply-menu aria-label="回复的更多操作">•••</button></header>
+            <p class="thread-reply-content">${escapeHTML(normalized.content)}</p>
+            <div class="post-actions">
+              <button class="post-action" type="button" data-reply-action="like" aria-label="喜欢回复">${iconPaths.heart}<span>${formatCount(normalized.likes)}</span></button>
+              <button class="post-action" type="button" data-reply-action="comment" aria-label="评论回复">${iconPaths.comment}<span>${formatCount(normalized.comments)}</span></button>
+              <button class="post-action" type="button" data-reply-action="repost" aria-label="转发回复">${iconPaths.repost}<span>${formatCount(normalized.reposts)}</span></button>
+              <button class="post-action" type="button" data-reply-action="share" aria-label="分享回复">${iconPaths.share}</button>
+            </div>
+          </div>
+        </section>`;
+      }
+
+      function postHTML(post) {
+        const own = post.userId === 'user_current';
+        return `<article class="post-card" data-post-id="${escapeHTML(post.id)}">
+          <div class="post-avatar-rail">${avatarHTML(post)}${post.reply ? '<span class="post-thread-line" aria-hidden="true"></span>' : ''}</div>
+          <div class="post-main">
+            <header class="post-meta"><span class="post-name">${escapeHTML(post.username)}</span><time class="post-time">${escapeHTML(post.timeLabel || formatTime(post.createdAt))}</time><button class="post-more" type="button" data-post-menu="${escapeHTML(post.id)}" data-own="${own}" aria-label="更多操作">•••</button></header>
+            <p class="post-content">${escapeHTML(post.content)}</p><button class="post-expand" type="button">展开</button>
+            ${post.tags?.length ? `<div class="post-tags">${post.tags.map(tag => `<span class="post-tag">${escapeHTML(tag)}</span>`).join('')}</div>` : ''}
+            ${mediaHTML(post)}${attachmentHTML(post)}
+            <div class="post-actions">
+              <button class="post-action ${post.liked ? 'liked' : ''}" type="button" data-action="like" aria-label="喜欢">${iconPaths.heart}<span>${formatCount(post.likes)}</span></button>
+              <button class="post-action" type="button" data-action="comment" aria-label="评论">${iconPaths.comment}<span>${formatCount(post.comments)}</span></button>
+              <button class="post-action" type="button" data-action="repost" aria-label="转发">${iconPaths.repost}<span>${formatCount(post.reposts)}</span></button>
+              <button class="post-action" type="button" data-action="share" aria-label="分享">${iconPaths.share}</button>
+            </div>
+            ${replyHTML(post.reply)}
+          </div>
+        </article>`;
+      }
+
+      function allPosts() {
+        let posts = [...state.savedPosts, ...mockPosts];
+        if (state.filter === 'latest') posts = [...posts].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        if (state.filter === 'following') posts = posts.filter(post => [currentUsername, '小野同学', '阿紫在拍照'].includes(post.username));
+        if (state.query.trim()) {
+          const needle = state.query.trim().toLowerCase();
+          posts = posts.filter(post => `${post.username} ${post.content}`.toLowerCase().includes(needle));
+        }
+        return posts;
+      }
+
+      function renderFeed() {
+        const posts = allPosts();
+        feedEl.innerHTML = posts.map(postHTML).join('');
+        emptyEl.style.display = posts.length ? 'none' : 'block';
+        requestAnimationFrame(() => {
+          feedEl.querySelectorAll('.post-content').forEach(content => {
+            const expand = content.nextElementSibling;
+            if (content.scrollHeight > content.clientHeight + 2) expand.style.display = 'block';
+          });
+        });
+      }
+
+      function findPost(id) {
+        return state.savedPosts.find(post => post.id === id) || mockPosts.find(post => post.id === id);
+      }
+
+      function persistSavedPosts() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.savedPosts));
+      }
+
+      function showToast(message) {
+        clearTimeout(state.toastTimer);
+        toastEl.textContent = message;
+        toastEl.classList.add('show');
+        state.toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1800);
+      }
+
+      function openSheet(title, content, variant = '') {
+        sheet.className = `community-sheet${variant ? ` ${variant}-picker-sheet` : ''}`;
+        sheet.innerHTML = `<div class="sheet-handle"></div><h3>${escapeHTML(title)}</h3>${content}`;
+        sheetBackdrop.classList.add('open');
+      }
+
+      function closeSheet() {
+        sheetBackdrop.classList.remove('open');
+        sheet.className = 'community-sheet';
+        state.selectedPostId = null;
+      }
+
+      function openCompose(focusImage = false) {
+        composePage.classList.add('open');
+        document.body.classList.add('community-compose-open');
+        requestAnimationFrame(() => {
+          composeText.focus();
+          if (focusImage) document.getElementById('compose-file').click();
+        });
+        updateCompose();
+      }
+
+      function closeCompose(force = false) {
+        const dirty = state.compose.content.trim() || state.compose.images.length || state.compose.location || state.compose.activity || state.compose.isMapPoint;
+        if (!force && dirty && !window.confirm('是否放弃编辑？')) return;
+        composePage.classList.remove('open');
+        document.body.classList.remove('community-compose-open');
+        resetCompose();
+      }
+
+      function resetCompose() {
+        state.compose = { content: '', images: [], location: null, activity: null, isMapPoint: false };
+        composeText.value = '';
+        document.getElementById('compose-file').value = '';
+        updateCompose();
+      }
+
+      function updateCompose() {
+        state.compose.content = composeText.value;
+        const hasText = state.compose.content.trim().length > 0;
+        const missingLocation = state.compose.isMapPoint && !state.compose.location;
+        composePublish.disabled = !hasText || missingLocation;
+        composeHint.textContent = missingLocation ? '请先选择地点，让别人知道它在哪里' : '';
+        composeHint.classList.toggle('error', missingLocation);
+        composeCount.textContent = `${state.compose.content.length} / 300`;
+        document.getElementById('compose-map-switch').classList.toggle('on', state.compose.isMapPoint);
+        document.getElementById('compose-map-switch').setAttribute('aria-checked', String(state.compose.isMapPoint));
+        document.getElementById('compose-add-location').classList.toggle('active', Boolean(state.compose.location));
+        document.getElementById('compose-add-activity').classList.toggle('active', Boolean(state.compose.activity));
+        renderComposeImages();
+        renderComposeSelections();
+      }
+
+      function renderComposeImages() {
+        composeImages.innerHTML = state.compose.images.map((src, index) => `<div class="compose-image"><img src="${escapeHTML(src)}" alt="待发布图片 ${index + 1}"><button type="button" data-remove-image="${index}" aria-label="移除图片">×</button></div>`).join('');
+      }
+
+      function renderComposeSelections() {
+        const rows = [];
+        if (state.compose.location) rows.push(`<div class="compose-selection">⌖ <span>${escapeHTML(state.compose.location.name)}</span><button type="button" data-remove-selection="location" aria-label="移除地点">×</button></div>`);
+        if (state.compose.activity) rows.push(`<div class="compose-selection">票 <span>${escapeHTML(state.compose.activity.title)}</span><button type="button" data-remove-selection="activity" aria-label="移除活动">×</button></div>`);
+        composeSelections.innerHTML = rows.join('');
+      }
+
+      function publishPost() {
+        if (composePublish.disabled) return;
+        composePublish.disabled = true;
+        composePublish.textContent = '发布中';
+        const publishedAsMapPoint = state.compose.isMapPoint;
+        const newPost = {
+          id: `post_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+          userId: 'user_current', username: currentUsername, avatar: currentAvatar,
+          content: state.compose.content.trim(), images: [...state.compose.images], createdAt: new Date().toISOString(),
+          location: state.compose.location, activity: state.compose.activity, isMapPoint: state.compose.isMapPoint,
+          likes: 0, comments: 0, reposts: 0, liked: false
+        };
+        setTimeout(() => {
+          state.savedPosts = [newPost, ...state.savedPosts];
+          persistSavedPosts();
+          window.dispatchEvent(new CustomEvent('echoland:post-created', { detail: newPost }));
+          composePublish.textContent = '发布';
+          closeCompose(true);
+          state.filter = 'recommended';
+          document.querySelectorAll('.feed-filter button').forEach(button => button.classList.toggle('active', button.dataset.filter === 'recommended'));
+          renderFeed();
+          document.querySelector('.community-page').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          showToast(publishedAsMapPoint ? '已发布并设为echo点' : '发布成功');
+        }, 420);
+      }
+
+      function locationPicker() {
+        openSheet('选择地点', demoLocations.map(location => `<button class="sheet-option" type="button" data-pick-location="${location.id}"><span class="attachment-icon">⌖</span><span class="sheet-option-copy"><span class="sheet-option-title">${escapeHTML(location.name)}</span><span class="sheet-option-sub">${escapeHTML(location.address)}</span></span></button>`).join(''));
+      }
+
+      function activityPicker() {
+        openSheet('选择活动', `<div class="activity-search-wrap">${iconPaths.search}<input class="activity-search-input" id="activity-search-input" type="search" placeholder="搜索活动名称或场地" autocomplete="off"></div><div class="activity-sug-label">推荐活动</div><div class="activity-sug-list" id="activity-sug-list"></div>`, 'activity');
+        renderActivitySuggestions('');
+        requestAnimationFrame(() => document.getElementById('activity-search-input')?.focus());
+      }
+
+      function renderActivitySuggestions(query) {
+        const target = document.getElementById('activity-sug-list');
+        if (!target) return;
+        const keyword = query.trim().toLowerCase();
+        const suggestions = demoActivities.filter(activity => `${activity.title} ${activity.time} ${activity.venue}`.toLowerCase().includes(keyword));
+        target.innerHTML = suggestions.length
+          ? suggestions.map(activity => `<button class="sheet-option activity-option" type="button" data-pick-activity="${activity.id}"><span class="attachment-icon">票</span><span class="sheet-option-copy"><span class="sheet-option-title">${activityTitleHTML(activity)}</span><span class="sheet-option-sub">${activityMetaHTML(activity)}</span></span></button>`).join('')
+          : '<div class="activity-sug-empty">没有找到相关活动</div>';
+      }
+
+      function postMenu(post) {
+        const own = post?.userId === 'user_current';
+        openSheet('动态操作', `<button class="sheet-option" type="button" data-sheet-action="copy">复制内容</button><button class="sheet-option" type="button" data-sheet-action="hide">不感兴趣</button><button class="sheet-option" type="button" data-sheet-action="report">举报</button>${own ? '<button class="sheet-option danger" type="button" data-sheet-action="delete">删除动态</button>' : ''}`);
+      }
+
+      function commentSheet(post) {
+        openSheet('写评论', `<div style="display:flex;gap:calc(9 * var(--u));padding-bottom:calc(6 * var(--u))"><input id="community-comment-input" maxlength="120" placeholder="回复 ${escapeHTML(post.username)}" style="flex:1;min-width:0;height:calc(44 * var(--u));padding:0 calc(13 * var(--u));border:1px solid rgba(255,255,255,.1);border-radius:calc(14 * var(--u));outline:0;background:#0d1014;color:#fff"><button type="button" data-sheet-action="submit-comment" style="padding:0 calc(15 * var(--u));border-radius:calc(14 * var(--u));background:var(--brand);color:#0b0d09;font-weight:700">发送</button></div>`);
+        requestAnimationFrame(() => document.getElementById('community-comment-input')?.focus());
+      }
+
+      function repostSheet(post) {
+        openSheet('转发', `<button class="sheet-option" type="button" data-sheet-action="repost-community">转发到社区</button><button class="sheet-option" type="button" data-sheet-action="copy-link">复制链接</button>`);
+      }
+
+      async function copyText(text, successMessage) {
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (error) {
+          const helper = document.createElement('textarea');
+          helper.value = text;
+          helper.style.position = 'fixed';
+          helper.style.opacity = '0';
+          document.body.appendChild(helper);
+          helper.select();
+          document.execCommand('copy');
+          helper.remove();
+        }
+        showToast(successMessage);
+      }
+
+      function goToLocation(locationId) {
+        if (!window.MOCK_ECHO_POINTS?.some(point => point.id === locationId)) return;
+        window.CURRENT_ECHO_ID = locationId;
+        window.CURRENT_EVENT_ID = '';
+        window.DETAIL_RETURN_TAB = 'tab-community';
+        if (typeof window.switchTab === 'function') window.switchTab('tab-event-detail');
+        if (typeof window.renderEventDetail === 'function') window.renderEventDetail();
+      }
+
+      function goToActivity(activityId) {
+        if (!window.MOCK_EVENTS?.some(event => event.id === activityId)) return;
+        window.CURRENT_EVENT_ID = activityId;
+        window.CURRENT_ECHO_ID = '';
+        window.DETAIL_RETURN_TAB = 'tab-community';
+        if (typeof window.switchTab === 'function') window.switchTab('tab-event-detail');
+        if (typeof window.renderEventDetail === 'function') window.renderEventDetail();
+      }
+
+      document.getElementById('community-logo').addEventListener('click', () => {
+        state.savedPosts = readSavedPosts();
+        renderFeed();
+        document.querySelector('.community-page').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showToast('已刷新');
+      });
+
+      document.getElementById('community-menu').addEventListener('click', () => openSheet('社区', '<button class="sheet-option" type="button" data-sheet-action="menu-home">回到推荐</button><button class="sheet-option" type="button" data-sheet-action="menu-saved">我发布的动态</button><button class="sheet-option" type="button" data-sheet-action="menu-about">关于回声地</button>'));
+      document.getElementById('community-search').addEventListener('click', () => {
+        document.getElementById('community-searchbar').classList.add('open');
+        document.getElementById('community-search-input').focus();
+      });
+      document.getElementById('community-search-cancel').addEventListener('click', () => {
+        state.query = '';
+        document.getElementById('community-search-input').value = '';
+        document.getElementById('community-searchbar').classList.remove('open');
+        renderFeed();
+      });
+      document.getElementById('community-search-input').addEventListener('input', event => { state.query = event.target.value; renderFeed(); });
+
+      document.querySelectorAll('[data-open-compose], #quick-compose').forEach(button => button.addEventListener('click', () => openCompose(false)));
+      document.querySelectorAll('.feed-filter button').forEach(button => button.addEventListener('click', () => {
+        state.filter = button.dataset.filter;
+        document.querySelectorAll('.feed-filter button').forEach(item => item.classList.toggle('active', item === button));
+        renderFeed();
+      }));
+
+      feedEl.addEventListener('click', event => {
+        const card = event.target.closest('.post-card');
+        if (!card) return;
+        const post = findPost(card.dataset.postId);
+        const actionButton = event.target.closest('[data-action]');
+        const menuButton = event.target.closest('[data-post-menu]');
+        const locationButton = event.target.closest('[data-location-id]');
+        const activityButton = event.target.closest('[data-activity-id]');
+        const previewButton = event.target.closest('[data-preview-src]');
+        const expandButton = event.target.closest('.post-expand');
+        if (actionButton?.dataset.action === 'like') {
+          post.liked = !post.liked;
+          post.likes = Math.max(0, Number(post.likes || 0) + (post.liked ? 1 : -1));
+          if (post.userId === 'user_current') persistSavedPosts();
+          renderFeed();
+        } else if (actionButton?.dataset.action === 'comment') {
+          state.selectedPostId = post.id;
+          commentSheet(post);
+        } else if (actionButton?.dataset.action === 'repost') {
+          state.selectedPostId = post.id;
+          repostSheet(post);
+        } else if (actionButton?.dataset.action === 'share') {
+          copyText(`${location.origin}${location.pathname}#community/post/${post.id}`, '已复制分享链接');
+        } else if (menuButton) {
+          state.selectedPostId = post.id;
+          postMenu(post);
+        } else if (locationButton) {
+          goToLocation(locationButton.dataset.locationId);
+        } else if (activityButton) {
+          goToActivity(activityButton.dataset.activityId);
+        } else if (previewButton) {
+          document.getElementById('preview-image').src = previewButton.dataset.previewSrc;
+          document.getElementById('community-preview').classList.add('open');
+          document.body.classList.add('community-preview-open');
+        } else if (expandButton) {
+          const content = expandButton.previousElementSibling;
+          const expanded = content.classList.toggle('expanded');
+          expandButton.textContent = expanded ? '收起' : '展开';
+        }
+      });
+
+      document.getElementById('compose-cancel').addEventListener('click', () => closeCompose(false));
+      composeText.addEventListener('input', updateCompose);
+      document.getElementById('compose-publish').addEventListener('click', publishPost);
+      document.getElementById('compose-add-image').addEventListener('click', () => document.getElementById('compose-file').click());
+      document.getElementById('compose-add-location').addEventListener('click', locationPicker);
+      document.getElementById('compose-add-activity').addEventListener('click', activityPicker);
+      document.getElementById('compose-map-switch').addEventListener('click', () => { state.compose.isMapPoint = !state.compose.isMapPoint; updateCompose(); });
+
+      document.getElementById('compose-file').addEventListener('change', event => {
+        const available = 4 - state.compose.images.length;
+        const files = [...event.target.files].slice(0, available);
+        if (!files.length) {
+          if (available <= 0) showToast('最多添加 4 张图片');
+          return;
+        }
+        Promise.all(files.map(file => new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        }))).then(images => {
+          state.compose.images.push(...images);
+          event.target.value = '';
+          updateCompose();
+        });
+      });
+
+      composeImages.addEventListener('click', event => {
+        const button = event.target.closest('[data-remove-image]');
+        if (!button) return;
+        state.compose.images.splice(Number(button.dataset.removeImage), 1);
+        updateCompose();
+      });
+
+      composeSelections.addEventListener('click', event => {
+        const button = event.target.closest('[data-remove-selection]');
+        if (!button) return;
+        state.compose[button.dataset.removeSelection] = null;
+        updateCompose();
+      });
+
+      sheetBackdrop.addEventListener('click', event => {
+        if (event.target === sheetBackdrop) closeSheet();
+        const locationButton = event.target.closest('[data-pick-location]');
+        const activityButton = event.target.closest('[data-pick-activity]');
+        const actionButton = event.target.closest('[data-sheet-action]');
+        if (locationButton) {
+          state.compose.location = demoLocations.find(item => item.id === locationButton.dataset.pickLocation);
+          closeSheet(); updateCompose();
+        } else if (activityButton) {
+          state.compose.activity = demoActivities.find(item => item.id === activityButton.dataset.pickActivity);
+          closeSheet(); updateCompose();
+        } else if (actionButton) {
+          const action = actionButton.dataset.sheetAction;
+          const post = findPost(state.selectedPostId);
+          if (action === 'copy' && post) copyText(post.content, '已复制内容');
+          if (action === 'copy-link' && post) copyText(`${location.origin}${location.pathname}#community/post/${post.id}`, '已复制链接');
+          if (action === 'hide' && post) {
+            const mockIndex = mockPosts.indexOf(post);
+            if (mockIndex >= 0) mockPosts.splice(mockIndex, 1);
+            renderFeed(); showToast('已减少此类内容');
+          }
+          if (action === 'report') showToast('已收到，我们会核查');
+          if (action === 'delete' && post) { state.savedPosts = state.savedPosts.filter(item => item.id !== post.id); persistSavedPosts(); renderFeed(); showToast('动态已删除'); }
+          if (action === 'submit-comment' && post) {
+            const input = document.getElementById('community-comment-input');
+            if (!input?.value.trim()) { showToast('先写一句评论'); return; }
+            post.comments = Number(post.comments || 0) + 1;
+            post.reply = `${currentUsername}：${input.value.trim()}`;
+            if (post.userId === 'user_current') persistSavedPosts();
+            renderFeed(); showToast('评论已发布');
+          }
+          if (action === 'repost-community') showToast('转发功能已预留');
+          if (action === 'menu-home') { state.filter = 'recommended'; renderFeed(); }
+          if (action === 'menu-saved') { state.query = currentUsername; renderFeed(); }
+          if (action === 'menu-about') showToast('Echoland · 发现城市里的回声');
+          closeSheet();
+        }
+      });
+
+      sheetBackdrop.addEventListener('input', event => {
+        if (event.target.id === 'activity-search-input') renderActivitySuggestions(event.target.value);
+      });
+
+      document.getElementById('preview-close').addEventListener('click', () => {
+        document.getElementById('community-preview').classList.remove('open');
+        document.body.classList.remove('community-preview-open');
+      });
+
+      window.addEventListener('storage', event => {
+        if (event.key === STORAGE_KEY) { state.savedPosts = readSavedPosts(); renderFeed(); }
+      });
+
+      renderFeed();
+      updateCompose();
+    })();
+  </script>
+</section>
