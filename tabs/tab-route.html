@@ -31,21 +31,23 @@
     font-size: calc(22 * var(--u));
     font-weight: 700;
   }
-  .route-branding {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: calc(3 * var(--u));
-  }
-  .route-logo {
-    display: block;
-    width: calc(132 * var(--u));
-    height: auto;
-  }
-  .route-branding h2 {
-    color: var(--text-main);
-    font-size: calc(15 * var(--u));
-    font-weight: 650;
+.route-back-btn {
+  display: grid;
+  place-items: center;
+  width: calc(36 * var(--u));
+  height: calc(36 * var(--u));
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-main);
+  transition: transform .18s ease;
+}
+.route-back-btn:active { transform: scale(.94); }
+.route-back-btn svg {
+  width: calc(20 * var(--u));
+  height: calc(20 * var(--u));
+  fill: currentColor;
   }
   .route-city {
     display: flex;
@@ -1214,7 +1216,9 @@
 
 <div class="route-page" id="routeHomeView">
   <div class="route-header">
-    <div class="route-branding"><img class="route-logo" src="assets/icons/community-logo.png" alt="Echoland 回声地"></div>
+    <button class="route-back-btn" type="button" onclick="switchTab('tab-home')" aria-label="返回首页">
+      <svg viewBox="0 0 24 24"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12Z"/></svg>
+    </button>
     <button class="home-location route-city" type="button" onclick="routeToggleCity()" aria-label="当前城市：南京">
       <span class="home-location-pin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.8A2.8 2.8 0 1 1 12 6a2.8 2.8 0 0 1 0 5.8Z"/></svg></span>
       <span class="route-city-name">南京</span><span class="home-location-arrow" aria-hidden="true"></span>
@@ -1387,9 +1391,9 @@
   ];
 
   const COMMUNITY_ROUTES = [
-    { title: '鼓楼深夜文艺路线', duration: '4h', cost: '约¥80', area: '鼓楼区', users: '238人用过', author: '光影捕手', tags: ['展览','书店','深夜'], coverClass: '' },
-    { title: '秦淮独立音乐夜', duration: '3h', cost: '约¥69', area: '秦淮区', users: '91人用过', author: '夜行者', tags: ['音乐','市集'], coverClass: 'cover-green' },
-    { title: '周末白天文艺市集路线', duration: '3.5h', cost: '约¥120', area: '玄武区', users: '156人用过', author: '市集达人', tags: ['市集','展览','下午'], coverClass: 'cover-green' }
+    { title: '鼓楼深夜文艺路线', duration: '4h', cost: '约¥80', area: '鼓楼区', users: '238人用过', author: '光影捕手', tags: ['展览','书店','深夜'], coverClass: '', coverImage: 'assets/route/community-route-1.jpg' },
+    { title: '秦淮独立音乐夜', duration: '3h', cost: '约¥69', area: '秦淮区', users: '91人用过', author: '夜行者', tags: ['音乐','市集'], coverClass: 'cover-green', coverImage: 'assets/route/community-route-2.jpg' },
+    { title: '周末白天文艺市集路线', duration: '3.5h', cost: '约¥120', area: '玄武区', users: '156人用过', author: '市集达人', tags: ['市集','展览','下午'], coverClass: 'cover-green', coverImage: 'assets/route/community-route-3.jpg' }
   ];
 
   // ====== INIT ======
@@ -1590,15 +1594,15 @@
     if (mode === 'selection') cardClass += checked ? ' selected' : ' deselected';
 
     let coverImages = {
-      's1': 'linear-gradient(135deg, #1a2a1f, #0d1a12)',
-      's2': 'linear-gradient(135deg, #1f2a1a, #12180d)',
-      's3': 'linear-gradient(135deg, #2a1a2a, #180d18)',
-      's4': 'linear-gradient(135deg, #2a241a, #18140d)'
+      's1': 'assets/route/stop-1.jpg',
+      's2': 'assets/route/stop-2.jpg',
+      's3': 'assets/route/stop-3.jpg',
+      's4': 'assets/route/stop-4.jpg'
     };
 
     let html = '<div class="' + cardClass + '" data-id="' + stop.id + '">';
-    let coverBg = coverImages[stop.id] || 'linear-gradient(135deg, var(--route-brand-deep), #10160e)';
-    html += '<div class="route-stop-cover" style="background:' + coverBg + '">';
+    let coverImg = coverImages[stop.id] || '';
+    html += '<div class="route-stop-cover"' + (coverImg ? ' style="background:url(' + coverImg + ') center/cover no-repeat"' : '') + '>';
     if (isActivity) {
       html += '<div class="stop-badge ' + (stop.price === 0 ? 'free' : 'paid') + '">' + (stop.price === 0 ? '免费' : stop.priceLabel) + '</div>';
     }
@@ -2045,7 +2049,7 @@
     let container = document.getElementById('routeCommunityCards');
     container.innerHTML = COMMUNITY_ROUTES.map(r =>
       '<div class="route-comm-card" onclick="routeUseCommunity(\'' + r.title + '\')">' +
-        '<div class="route-comm-cover ' + r.coverClass + '">' +
+        '<div class="route-comm-cover ' + r.coverClass + '" style="background:url(' + r.coverImage + ') center/cover no-repeat">' +
           '<div class="cover-users">' + r.users + '</div>' +
           '<div class="cover-title">' + r.title + '</div>' +
         '</div>' +

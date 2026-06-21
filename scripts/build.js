@@ -3,7 +3,7 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const shellPath = path.join(root, 'shell.html');
-const outputPath = path.join(root, 'echoland.html');
+const outputPath = path.join(root, 'index.html');
 
 const tabs = [
   ['tab-home', 'tabs/tab-home.html'],
