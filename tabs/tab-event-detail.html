@@ -1,0 +1,580 @@
+<section class="event-detail-page">
+  <style>
+    .event-detail-page {
+      position: relative;
+      min-height: 100vh;
+      padding-bottom: calc(90 * var(--u));
+      color: var(--text-main);
+      background: var(--bg);
+    }
+
+    /* ---------- 顶部导航 ---------- */
+    .detail-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(14 * var(--u)) calc(18 * var(--u));
+      background: rgba(5, 8, 13, .92);
+      backdrop-filter: blur(calc(12 * var(--u)));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-back,
+    .detail-share {
+      display: grid;
+      place-items: center;
+      width: calc(36 * var(--u));
+      height: calc(36 * var(--u));
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--text-main);
+      transition: transform .18s ease;
+    }
+
+    .detail-back:active,
+    .detail-share:active {
+      transform: scale(.94);
+    }
+
+    .detail-back svg,
+    .detail-share svg {
+      width: calc(20 * var(--u));
+      height: calc(20 * var(--u));
+      fill: currentColor;
+    }
+
+    .detail-logo {
+      height: calc(22 * var(--u));
+      width: auto;
+    }
+
+    /* ---------- 内容区 ---------- */
+    .detail-body {
+      padding: calc(18 * var(--u));
+    }
+
+    .detail-cover {
+      position: relative;
+      width: 100%;
+      height: calc(260 * var(--u));
+      border-radius: calc(20 * var(--u));
+      overflow: hidden;
+      margin-bottom: calc(20 * var(--u));
+      background: var(--surface-soft);
+    }
+
+    .detail-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-category {
+      position: absolute;
+      top: calc(14 * var(--u));
+      left: calc(14 * var(--u));
+      padding: calc(5 * var(--u)) calc(12 * var(--u));
+      border-radius: calc(12 * var(--u));
+      background: rgba(168, 255, 61, .18);
+      color: var(--brand);
+      font-size: calc(12 * var(--u));
+      font-weight: 700;
+      border: 1px solid rgba(168, 255, 61, .3);
+    }
+
+    .detail-title {
+      margin: 0 0 calc(16 * var(--u));
+      font-size: calc(24 * var(--u));
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    /* ---------- 信息卡片 ---------- */
+    .detail-info-card {
+      padding: calc(16 * var(--u));
+      border-radius: calc(18 * var(--u));
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: calc(18 * var(--u));
+    }
+
+    .detail-info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: calc(12 * var(--u));
+      padding: calc(12 * var(--u)) 0;
+      border-bottom: 1px solid var(--border);
+      font-size: calc(14 * var(--u));
+      color: var(--text-sub);
+    }
+
+    .detail-info-row:first-child {
+      padding-top: 0;
+    }
+
+    .detail-info-row:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .detail-info-icon {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: calc(34 * var(--u));
+      height: calc(34 * var(--u));
+      border-radius: 50%;
+      background: rgba(168, 255, 61, .12);
+      color: var(--brand);
+    }
+
+    .detail-info-icon svg {
+      width: calc(18 * var(--u));
+      height: calc(18 * var(--u));
+      fill: currentColor;
+    }
+
+    .detail-info-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: calc(4 * var(--u));
+    }
+
+    .detail-info-label {
+      font-size: calc(12 * var(--u));
+      color: var(--text-sub);
+    }
+
+    .detail-info-value {
+      font-size: calc(15 * var(--u));
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .detail-info-value.price {
+      color: var(--brand);
+    }
+
+    /* ---------- 标签 ---------- */
+    .detail-section {
+      margin-bottom: calc(24 * var(--u));
+    }
+
+    .detail-section-title {
+      margin: 0 0 calc(12 * var(--u));
+      font-size: calc(17 * var(--u));
+      font-weight: 700;
+    }
+
+    .detail-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(10 * var(--u));
+    }
+
+    .detail-tag {
+      padding: calc(6 * var(--u)) calc(14 * var(--u));
+      border-radius: calc(20 * var(--u));
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      font-size: calc(13 * var(--u));
+    }
+
+    /* ---------- 活动简介 ---------- */
+    .detail-desc {
+      font-size: calc(14 * var(--u));
+      line-height: 1.8;
+      color: var(--text-sub);
+      white-space: pre-line;
+    }
+
+    /* ---------- 推荐理由 ---------- */
+    .detail-reasons {
+      display: flex;
+      flex-direction: column;
+      gap: calc(10 * var(--u));
+    }
+
+    .detail-reason {
+      display: flex;
+      align-items: flex-start;
+      gap: calc(10 * var(--u));
+      padding: calc(12 * var(--u)) calc(14 * var(--u));
+      border-radius: calc(14 * var(--u));
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: calc(14 * var(--u));
+      color: var(--text-sub);
+    }
+
+    .detail-reason-dot {
+      flex-shrink: 0;
+      width: calc(8 * var(--u));
+      height: calc(8 * var(--u));
+      margin-top: calc(7 * var(--u));
+      border-radius: 50%;
+      background: var(--brand);
+      box-shadow: 0 0 calc(8 * var(--u)) rgba(168, 255, 61, .5);
+    }
+
+    .detail-reason-text {
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    /* ---------- 发起人卡片 ---------- */
+    .detail-host-card {
+      display: flex;
+      align-items: center;
+      gap: calc(14 * var(--u));
+      padding: calc(16 * var(--u));
+      border-radius: calc(18 * var(--u));
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .detail-host-avatar {
+      flex-shrink: 0;
+      width: calc(56 * var(--u));
+      height: calc(56 * var(--u));
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--surface-soft);
+    }
+
+    .detail-host-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-host-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .detail-host-name {
+      margin: 0 0 calc(4 * var(--u));
+      font-size: calc(16 * var(--u));
+      font-weight: 600;
+    }
+
+    .detail-host-bio {
+      margin: 0;
+      font-size: calc(13 * var(--u));
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .detail-host-follow {
+      flex-shrink: 0;
+      height: calc(32 * var(--u));
+      padding: 0 calc(14 * var(--u));
+      border: 1px solid var(--brand);
+      border-radius: calc(16 * var(--u));
+      background: transparent;
+      color: var(--brand);
+      font-size: calc(13 * var(--u));
+      font-weight: 600;
+    }
+
+    .detail-host-follow.active {
+      background: var(--brand);
+      color: #05080d;
+    }
+
+    /* ---------- 底部操作栏 ---------- */
+    .detail-actions {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: calc(10 * var(--u));
+      width: min(100vw, calc(430 * var(--u)));
+      padding: calc(12 * var(--u)) calc(18 * var(--u)) calc(18 * var(--u) + env(safe-area-inset-bottom));
+      background: rgba(5, 8, 13, .94);
+      backdrop-filter: blur(calc(12 * var(--u)));
+      border-top: 1px solid var(--border);
+      transform: translateX(-50%);
+    }
+
+    .detail-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(6 * var(--u));
+      height: calc(44 * var(--u));
+      border: 1px solid var(--border);
+      border-radius: calc(22 * var(--u));
+      background: var(--surface);
+      color: var(--text-main);
+      font-size: calc(13 * var(--u));
+      font-weight: 600;
+      transition: all .18s ease;
+    }
+
+    .detail-action svg {
+      width: calc(16 * var(--u));
+      height: calc(16 * var(--u));
+      fill: currentColor;
+    }
+
+    .detail-action.primary {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: #05080d;
+    }
+
+    .detail-action.active {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .detail-action:active {
+      transform: scale(.97);
+    }
+
+    /* ---------- 空状态 ---------- */
+    .detail-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      padding: calc(32 * var(--u));
+      color: var(--text-sub);
+      text-align: center;
+    }
+
+    .detail-empty-title {
+      margin: 0 0 calc(8 * var(--u));
+      font-size: calc(18 * var(--u));
+      font-weight: 700;
+      color: var(--text-main);
+    }
+  </style>
+
+  <header class="detail-header">
+    <button class="detail-back" type="button" aria-label="返回首页" id="detailBackBtn">
+      <svg viewBox="0 0 24 24"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12Z"/></svg>
+    </button>
+    <img class="detail-logo" src="assets/icons/app-logo.png" alt="Echoland 回声地">
+    <button class="detail-share" type="button" aria-label="分享" id="detailShareBtn">
+      <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92Z"/></svg>
+    </button>
+  </header>
+
+  <div class="detail-body" id="detailBody">
+    <!-- 动态渲染内容 -->
+  </div>
+
+  <div class="detail-actions">
+    <button class="detail-action" type="button" id="detailFavBtn">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
+      <span>收藏</span>
+    </button>
+    <button class="detail-action primary" type="button" id="detailJoinBtn">
+      <svg viewBox="0 0 24 24"><path d="M19 15v3H5v-3H3v3c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-3h-2ZM13 12.67l2.59-2.58L17 10.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67Z"/></svg>
+      <span>加入路线</span>
+    </button>
+    <button class="detail-action" type="button" id="detailInviteBtn">
+      <svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm-9-2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2Zm0 2c-2.21 0-4 1.79-4 4v2h8v-2c0-2.21-1.79-4-4-4Zm9 6h6v-2h-6v2Z"/></svg>
+      <span>发起邀约</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  (function () {
+    'use strict';
+
+    const detailBody = document.getElementById('detailBody');
+    const detailPanel = document.getElementById('tab-event-detail');
+    const bottomTabs = document.querySelector('.bottom-tabs');
+
+    function toggleBottomTabs(show) {
+      if (bottomTabs) {
+        bottomTabs.style.display = show ? '' : 'none';
+      }
+    }
+
+    function findEvent(id) {
+      const events = (typeof window !== 'undefined' && window.MOCK_EVENTS) ? window.MOCK_EVENTS : [];
+      return events.find(evt => evt.id === id);
+    }
+
+    function formatDetailTime(startTime, endTime) {
+      const s = new Date(startTime.replace(' ', 'T'));
+      const e = new Date(endTime.replace(' ', 'T'));
+      const pad = n => String(n).padStart(2, '0');
+      const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      return `${s.getFullYear()}.${pad(s.getMonth()+1)}.${pad(s.getDate())} ${weekdays[s.getDay()]} ${pad(s.getHours())}:${pad(s.getMinutes())} - ${pad(e.getHours())}:${pad(e.getMinutes())}`;
+    }
+
+    function renderDetail() {
+      const id = (typeof window !== 'undefined' && window.CURRENT_EVENT_ID) ? window.CURRENT_EVENT_ID : '';
+      const evt = findEvent(id);
+
+      if (!evt || !detailBody) {
+        if (detailBody) {
+          detailBody.innerHTML = `
+            <div class="detail-empty">
+              <p class="detail-empty-title">活动不存在</p>
+              <p>返回首页重新选择活动</p>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      const priceText = evt.price === '免费' ? '免费' : '¥' + evt.price;
+      const reasons = (evt.recommendReasons && evt.recommendReasons.length) ? evt.recommendReasons : ['小众精选', '城市探索', '不容错过'];
+      const reasonsHtml = reasons.slice(0, 4).map(r => `
+        <div class="detail-reason">
+          <span class="detail-reason-dot"></span>
+          <span class="detail-reason-text">${r}</span>
+        </div>
+      `).join('');
+      const tagsHtml = (evt.tags || []).map(t => `<span class="detail-tag">${t}</span>`).join('');
+      const host = evt.organizer || { name: '未知发起人', bio: '', logo: '' };
+
+      detailBody.innerHTML = `
+        <div class="detail-cover">
+          <img src="${evt.cover}" alt="${evt.title}">
+          <span class="detail-category">${evt.category}</span>
+        </div>
+
+        <h1 class="detail-title">${evt.title}</h1>
+
+        <div class="detail-info-card">
+          <div class="detail-info-row">
+            <span class="detail-info-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2Zm0 16H5V9h14v11Z"/></svg>
+            </span>
+            <div class="detail-info-content">
+              <span class="detail-info-label">活动时间</span>
+              <span class="detail-info-value">${formatDetailTime(evt.startTime, evt.endTime)}</span>
+            </div>
+          </div>
+          <div class="detail-info-row">
+            <span class="detail-info-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z"/></svg>
+            </span>
+            <div class="detail-info-content">
+              <span class="detail-info-label">活动地点</span>
+              <span class="detail-info-value">${evt.city}${evt.district} · ${evt.address}</span>
+            </div>
+          </div>
+          <div class="detail-info-row">
+            <span class="detail-info-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm1.41 16.09V20h-2v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05 1.18 1.91 2.53 1.91 1.29 0 2.13-.62 2.13-1.91 0-1.11-.96-1.5-2.53-2.02-1.96-.66-3.27-1.52-3.27-3.6 0-1.64 1.31-2.93 2.98-3.22V4h2v1.92c1.5.32 2.71 1.35 2.86 3.06h-1.96c-.1-.97-1.01-1.53-2.1-1.53-1.17 0-1.98.62-1.98 1.49 0 .98.91 1.33 2.53 1.91 1.98.73 3.27 1.66 3.27 3.71 0 1.79-1.43 3.09-3.15 3.42Z"/></svg>
+            </span>
+            <div class="detail-info-content">
+              <span class="detail-info-label">活动费用</span>
+              <span class="detail-info-value price">${priceText}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h2 class="detail-section-title">活动标签</h2>
+          <div class="detail-tags">${tagsHtml}</div>
+        </div>
+
+        <div class="detail-section">
+          <h2 class="detail-section-title">活动简介</h2>
+          <p class="detail-desc">${evt.description || '暂无活动简介'}</p>
+        </div>
+
+        <div class="detail-section">
+          <h2 class="detail-section-title">推荐理由</h2>
+          <div class="detail-reasons">${reasonsHtml}</div>
+        </div>
+
+        <div class="detail-section">
+          <h2 class="detail-section-title">发起人</h2>
+          <div class="detail-host-card">
+            <div class="detail-host-avatar">
+              <img src="${host.logo || 'https://placehold.co/56x56/11161d/ffffff?text=?' }" alt="${host.name}">
+            </div>
+            <div class="detail-host-info">
+              <p class="detail-host-name">${host.name}</p>
+              <p class="detail-host-bio">${host.bio || '探索城市里的每一种可能'}</p>
+            </div>
+            <button class="detail-host-follow" type="button" id="hostFollowBtn">关注</button>
+          </div>
+        </div>
+      `;
+
+      // 关注按钮
+      const followBtn = document.getElementById('hostFollowBtn');
+      if (followBtn) {
+        followBtn.addEventListener('click', () => {
+          followBtn.classList.toggle('active');
+          followBtn.textContent = followBtn.classList.contains('active') ? '已关注' : '关注';
+        });
+      }
+    }
+
+    // 暴露全局渲染函数，供首页调用
+    window.renderEventDetail = renderDetail;
+
+    // 返回首页
+    const backBtn = document.getElementById('detailBackBtn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        if (typeof window.switchTab === 'function') {
+          window.switchTab('tab-home');
+        }
+      });
+    }
+
+    // 分享按钮
+    const shareBtn = document.getElementById('detailShareBtn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => alert('分享功能即将上线'));
+    }
+
+    // 底部操作按钮
+    const favBtn = document.getElementById('detailFavBtn');
+    const joinBtn = document.getElementById('detailJoinBtn');
+    const inviteBtn = document.getElementById('detailInviteBtn');
+
+    if (favBtn) {
+      favBtn.addEventListener('click', () => favBtn.classList.toggle('active'));
+    }
+    if (joinBtn) {
+      joinBtn.addEventListener('click', () => alert('已加入路线（mock）'));
+    }
+    if (inviteBtn) {
+      inviteBtn.addEventListener('click', () => alert('发起邀约功能即将上线'));
+    }
+
+    // 当详情页被激活时自动渲染，并隐藏全局底部导航；返回首页时恢复导航
+    if (detailPanel) {
+      const observer = new MutationObserver(() => {
+        const isActive = detailPanel.classList.contains('active');
+        if (isActive) {
+          renderDetail();
+          toggleBottomTabs(false);
+        } else {
+          toggleBottomTabs(true);
+        }
+      });
+      observer.observe(detailPanel, { attributes: true, attributeFilter: ['class'] });
+    }
+  })();
+</script>
