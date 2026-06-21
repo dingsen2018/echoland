@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Echoland 回声地</title>
+  <script src="scripts/mock-data.js"></script>
+  <script src="scripts/mapService.js"></script>
   <style>
     :root {
       --u: min(calc(100vw / 375), 1px);
@@ -133,6 +135,7 @@
   <div class="app-shell">
     <main class="app-main">
       <div id="tab-home" class="tab-panel active"></div>
+      <div id="tab-event-detail" class="tab-panel"></div>
       <div id="tab-route" class="tab-panel"></div>
       <div id="tab-community" class="tab-panel"></div>
       <div id="tab-mine" class="tab-panel"></div>
@@ -167,17 +170,17 @@
   </div>
 
   <script>
-    function switchTab(tabId) {
+    window.switchTab = function switchTab(tabId) {
       document.querySelectorAll('.tab-panel').forEach(panel => {
         panel.classList.toggle('active', panel.id === tabId);
       });
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabId);
       });
-    }
+    };
 
     document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      btn.addEventListener('click', () => window.switchTab(btn.dataset.tab));
     });
   </script>
 </body>

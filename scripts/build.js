@@ -7,6 +7,7 @@ const outputPath = path.join(root, 'echoland.html');
 
 const tabs = [
   ['tab-home', 'tabs/tab-home.html'],
+  ['tab-event-detail', 'tabs/tab-event-detail.html'],
   ['tab-route', 'tabs/tab-route.html'],
   ['tab-community', 'tabs/tab-community.html'],
   ['tab-mine', 'tabs/tab-mine.html']
